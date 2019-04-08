@@ -21,7 +21,7 @@ class Sample_db(db.Model):
 class UserSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('username','email')
+        fields = ('id','username','email')
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -33,15 +33,15 @@ def index():
 # endpoint to create new user
 @app.route("/user", methods=["POST"])
 def add_user():
-    username = request.form['username']
-    email = request.form['email']
+    username = request.json['username']
+    email = request.json['email']
     
     new_user = Sample_db(username, email)
 
     db.session.add(new_user)
     db.session.commit()
 
-    return render_template("trail1.html")
+    return jsonify(new_user)
 
 # endpoint to show all users
 @app.route("/user", methods=["GET"])

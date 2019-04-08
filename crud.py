@@ -92,4 +92,5 @@ def user_delete(id):
 
 # will 0.0.0.0 work with RMIT's network?
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.debug = True
+    app.run()
