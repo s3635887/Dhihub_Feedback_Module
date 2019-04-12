@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Projects from './Projects';
 import Jokes from './Components/Jokes'
 import PostForm from './Components/PostForm'
+import JokeSample from './Components/JokeSample';
+import Header from './Header';
 class App extends Component {
 
     constructor(){
@@ -47,17 +49,14 @@ class App extends Component {
                     
         return (
             <div>
-                <h1>Hello</h1>
+                <Header/>
+                
+                <PostForm/>
+                
+                <Jokes/>
                 <p>my name is trungs. iam a software engineer</p>
                 <p>I am always looking forward to working on meanful projects</p>
                 {bio}
-                {/* { <Projects/> } */}
-                {/* <form>
-                    <input type="text" name="firstname"/>
-                    <input type="submmit" value="Submit"/>
-                </form> */}
-                <PostForm/>
-                <Jokes/>
             </div>
             )
             
