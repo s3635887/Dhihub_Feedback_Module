@@ -1,0 +1,13 @@
+1. Create credential file -  IAM and Admin> Service Account
+e,g c:\s3582671-api-test1-8c8406f8079a.json
+
+2. download cloud sql proxy
+
+
+From Google SDK Shell ( Run)
+3. cloud_sql_proxy.exe -instances="s3582671-api-test1:australia-southeast1:testdb=tcp:5433" -credential_file="c:\s3582671-api-test1-8c8406f8079a.json" &
+
+
+4. Once proxy is running, Open another and From Google SDK Shell ( run the flask app)
+
+
