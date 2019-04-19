@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-slack_token = 'xoxb-575060474148-585358061488-uSAy4gzktu8jztx3154DzKdr'
+slack_token = 'xoxb-575060474148-600534221555-p4pSLvMQO4ZdbognZ9Z9PiFu'
 sc = SlackClient(slack_token)
 
 
@@ -20,14 +20,21 @@ def send_message():
     print(sc.api_call
     (
         "chat.postMessage",
-        channel = "DHAQX462K",
+        channel = "#random",
         text = message,
         attachments = [{"pretext": "Would you like to play a game?"}],
-        as_user = True	
+        as_user = False 	
     )
     )
 
     return render_template("trail2.html")
+
+@app.route("/recieve", methods=["GET"])
+def postJsonHandler():
+    print (request.is_json)
+    content = request.get_json()
+    print (content)
+    return 'JSON posted'
 
 if __name__ == '__main__':
     app.debug = True

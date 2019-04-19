@@ -1,11 +1,23 @@
-from flask import Flask, request, jsonify, render_template 
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_bootstrap import Bootstrap
+from flask_appconfig import AppConfig
 import os
+
+# app = Flask(__name__)
+# basedir = os.path.abspath(os.path.dirname(__file__))
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Pavan123@localhost:5432/Sample'
+# db = SQLAlchemy(app)
+# ma = Marshmallow(app)
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Pavan123@localhost:5432/Sample'
+USER   = 'root'
+PASS   = 'dhihub123'
+HOST   = '35.244.127.254'
+DBNAME = 'sample'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 

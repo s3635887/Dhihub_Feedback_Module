@@ -1,11 +1,19 @@
 from flask import Flask, request, jsonify, render_template 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from slackclient import SlackClient
 import os
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Pavan123@localhost:5432/Sample'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Pavan123@localhost:5432/Sample'
+USER   = 'root'
+PASS   = 'dhihub123'
+HOST   = '35.244.127.254'
+DBNAME = 'sample'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+slack_token = 'xoxb-575060474148-600534221555-p4pSLvMQO4ZdbognZ9Z9PiFu'
+sc = SlackClient(slack_token)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -28,12 +36,19 @@ users_schema = UserSchema(many=True)
 @app.route("/user", methods=["POST"])
 def add_user():
     question = request.json['question']
-    
-    
+    print(question)
     new_question = Question_db(question)
-
     db.session.add(new_question)
     db.session.commit()
+    print(sc.api_call
+    (
+        "chat.postMessage",
+        channel = "#random",
+        text = question,
+        attachments = [{"pretext": "Would you like to play a game?"}],
+        as_user = False 	
+    )
+    )
 
     return jsonify(new_question)
 
