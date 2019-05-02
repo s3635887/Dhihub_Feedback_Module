@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from slackclient import SlackClient
+import json
 import os
 
 app = Flask(__name__)
@@ -38,14 +39,13 @@ def add_user():
     question = request.json['question']
     print(question)
     new_question = Question_db(question)
-    db.session.add(new_question)
-    db.session.commit()
+    # db.session.add(new_question)
+    # db.session.commit()
     print(sc.api_call
     (
         "chat.postMessage",
         channel = "#random",
         text = question,
-        attachments = [{"pretext": "Would you like to play a game?"}],
         as_user = False 	
     )
     )

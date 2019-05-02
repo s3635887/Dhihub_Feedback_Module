@@ -4,11 +4,24 @@ class PostForm extends Component {
     constructor(props){
         super(props)
         this.state = {
-            question:""
+            question:"",
+            optionA:"",
+            optionB:"",
+            optionC:"",
+            optionD:"",
+            displatBio:false
         }
+        this.optionQuestion = this.optionQuestion.bind(this)
+        this.non_optionQuestion = this.non_optionQuestion.bind(this)
     }
     
-    
+optionQuestion(){
+    this.setState({displatBio: true})
+}
+
+non_optionQuestion(){
+    this.setState({displatBio: false})
+}
 changeHandler = (e) => {
     this.setState({[e.target.name]: e.target.value})
 }
@@ -32,38 +45,64 @@ submitHandler = e => {
 
 
     render() {
-        const {question} = this.state
-        // const { name, email} = this.state
-        // const {name}
-        // this.setState({isComplete:true})
+        // const {question, optionA, optionB, optionC} = this.state
+        const bio = this.state.displatBio?(
+            <div class="questionair">
+                <button type="button" onClick={this.non_optionQuestion}>Option</button>
+                <br/>
+                <br/>
+                <div class="text">
+                    A:<input type="text" 
+                            name="optionA"
+                            // value={optionA}
+                            onChange={this.changeHandler}
+                            />
+                </div>
+                
+                <br/>
+                <div class="text">
+                    B:<input type="text"
+                            name="optionB"
+                            // value={optionB}
+                            onChange={this.changeHandler}
+                            />
+                </div>
+                <br/>
+                <div class="text">
+                    C:<input type="text"
+                            name="optionC"
+                            // value={optionC}
+                            onChange={this.changeHandler}
+                            />
+                </div>
+                <br/>
+                <div class="text">
+                    D:<input type="text"
+                            name="optionD"
+                            // value={optionC}
+                            onChange={this.changeHandler}
+                            />
+                </div>
+                
+            </div>
+        ):(
+            <div>
+                <button type="button" onClick={this.optionQuestion}>Option</button>
+            </div>
+        )
         return (
             <div class="questionair">
-                <h2>Questionairs</h2>
+                <h2>Questionnaire</h2>
                 <form onSubmit={this.submitHandler}>
-                    {/* <div>
-                        <input type="text" 
-                            name="Id" 
-                            value={Id} 
-                            onChange={this.changeHandler}/>
-                    </div> */}
-                    {/* <div>
-                        <input type="text" 
-                            name="name" 
-                            value={name}
-                            onChange={this.changeHandler}/>
-                    </div> */}
+                    
                     <div>
                         <textarea rows="4" cols="50"
                             name="question"
-                            //value={question}
+                            // value={question}
                             onChange={this.changeHandler}/>
+                        {bio}
+
                     </div>
-                    {/* <div>
-                        <input type="text"
-                             name="email"    
-                             value={email}
-                             onChange={this.changeHandler}/>
-                    </div> */}
                     <button type="submit">Submit</button>
                 </form>
             </div>

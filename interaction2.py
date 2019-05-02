@@ -23,54 +23,6 @@ def verify_slack_token(request_token):
 
 # Send a Slack message on load. This needs to be _before_ the Flask server is started
 
-# A Dictionary of message attachment options
-# attachments_json = [
-# 	{
-# 		"type": "section",
-# 		"text": {
-# 			"type": "plain_text",
-# 			"text": "Rate this people!!",
-# 			"emoji": True
-# 		}
-# 	},
-# 	{
-# 		"type": "actions",
-# 		"elements": [
-# 			{
-# 				"type": "button",
-# 				"text": {
-# 					"type": "plain_text",
-# 					"text": "low",
-# 					"emoji": True
-# 				},
-# 				"value": "Go to Hell man!!!!"
-# 			},
-# 			{
-# 				"type": "button",
-# 				"text": {
-# 					"type": "plain_text",
-# 					"text": "medium",
-# 					"emoji": True
-# 				},
-# 				"value": "Okay"
-# 			},
-# 			{
-# 				"type": "button",
-# 				"text": {
-# 					"type": "plain_text",
-# 					"text": "high",
-# 					"emoji": True
-# 				},
-# 				"value": "AWSM"
-# 			}
-# 		]
-# 	},
-# 	{
-# 		"type": "divider"
-# 	}
-# ]
-
-
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
 
@@ -106,7 +58,7 @@ attachments_json = [
         "actions": [
             {
                 "name": "low",
-                "text": "LOW",
+                "text": ":smile:",
                 "type": "button",
                 "value": "Go to Hell man!!!!"
             },
@@ -123,7 +75,8 @@ attachments_json = [
 # Send a message with the above attachment, asking the user if they want coffee
 slack_client.api_call(
   "chat.postMessage",
-  channel="#random",
+  channel="UGX2TGTFU",
+  as_user = True,
   attachments=attachments_json
 )
 
