@@ -39,16 +39,16 @@ def add_user():
     question = request.json['question']
     print(question)
     new_question = Question_db(question)
-    # db.session.add(new_question)
-    # db.session.commit()
-    print(sc.api_call
-    (
-        "chat.postMessage",
-        channel = "#random",
-        text = question,
-        as_user = False 	
-    )
-    )
+    db.session.add(new_question)
+    db.session.commit()
+    # print(sc.api_call
+    # (
+    #     "chat.postMessage",
+    #     channel = "#random",
+    #     text = question,
+    #     as_user = False 	
+    # )
+    # )
 
     return jsonify(new_question)
 
