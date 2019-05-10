@@ -71,7 +71,7 @@ user_schema1 = UserSchema()
 users_schema1 = UserSchema(many=True)
 
 class User_info(db.Model):
-    UID = db.Column(db.Integer, primary_key=True)
+    UID = db.Column(db.String(50), primary_key=True)
     Name = db.Column(db.String(300))
 
     def __init__(self, UID,Name):
@@ -86,12 +86,12 @@ users_schema2 = UserSchema(many=True)
 
 
 class Answer(db.Model):
-    UID = db.Column(db.Integer, db.ForeignKey('user_info.UID'),primary_key=True)
+    UID = db.Column(db.String(50), db.ForeignKey('user_info.UID'),primary_key=True)
     que_id = db.Column(db.Integer, db.ForeignKey('question.que_id'),primary_key=True)
     SurveyID = db.Column(db.Integer, db.ForeignKey('survey.SurveyID'),primary_key=True)
     answer = db.Column(db.String(50), nullable=False)
 
-    def __init__(self, UID,que_id,answer,SurveyID):
+    def __init__(self, UID,que_id,SurveyID,answer):
         self.UID = UID
         self.que_id = que_id
         self.SurveyID = SurveyID
@@ -107,7 +107,7 @@ users_schema3 = UserSchema(many=True)
 
 
 
-@app.route("/user", methods=["POST"])
+@app.route("/user", methods=["POST","GET"])
 def add_user():
     question1 = request.json['question']
     op_a = request.json['optionA']
@@ -116,12 +116,43 @@ def add_user():
     op_d = request.json['optionD']
     
     print(question1,op_a,op_b,op_c,op_d)
+    
     new_question = Question(1,'Multiple Choice',question1,op_a,op_b,op_c,op_d)
-    print(new_question)
     db.session.add(new_question)
     db.session.commit()
+    
+    last_que = Question.query.order_by(Question.que_id.desc()).first()
+    from_que_get_id = user_schema1.dump(last_que)
+    question_id = from_que_get_id.data['que_id']
+    survey_id = from_que_get_id.data['SurveyID']
+    # op_a_value = "Value: "+op_a + " qid: "+str(question_id) + " sid: "+str(survey_id)
+    # op_b_value = "Value: "+op_b + " qid: "+str(question_id) + " sid: "+str(survey_id)
+    # op_c_value = "Value: "+op_c + " qid: "+str(question_id) + " sid: "+str(survey_id)
+    # op_d_value = "Value: "+op_d + " qid: "+str(question_id) + " sid: "+str(survey_id)
 
+    op_a_value = json.dumps({
+        "value" : op_a,
+        "qid" : question_id,
+        "surveyid" : survey_id
+    })
+    op_b_value = json.dumps({
+        "value" : op_b,
+        "qid" : question_id,
+        "surveyid" : survey_id
+    })
+    op_c_value = json.dumps({
+        "value" : op_c,
+        "qid" : question_id,
+        "surveyid" : survey_id
+    })
+    op_d_value = json.dumps({
+        "value" : op_d,
+        "qid" : question_id,
+        "surveyid" : survey_id
+    })
 
+    print(op_a_value)
+    
     attachments_json = [
     {
         "fallback": "Upgrade your Slack client to use messages like these.",
@@ -131,19 +162,40 @@ def add_user():
         "actions": [
             {
                 "name": "low",
-                "text": ":smile:",
+                "text": op_a,
                 "type": "button",
-                "value": "Go to Hell man!!!!"
+                "value": op_a_value
             },
             {
                 "name": "high",
-                "text": "HIGH",
+                "text": op_b,
                 "type": "button",
-                "value": "Good Boy!!"
+                "value": op_b_value
+            },
+            {
+                "name": "high",
+                "text": op_c,
+                "type": "button",
+                "value": op_c_value
+            },
+            {
+                "name": "high",
+                "text": op_d,
+                "type": "button",
+                "value": op_d_value
             }
         ]
     }
 ]
+
+    # Send a message with the above attachment, asking the user if they want coffee
+    sc.api_call(
+    "chat.postMessage",
+    channel="UGX2TGTFU",
+    text = question1,
+    as_user = True,
+    attachments=attachments_json
+    )
     # print(sc.api_call
     # (
     #     "chat.postMessage",
@@ -154,6 +206,53 @@ def add_user():
     # )
 
     return jsonify(new_question)
+
+@app.route("/slack/message_actions", methods=["POST"])
+def message_actions():
+
+    # Parse the request payload
+    form_json = json.loads(request.form["payload"])
+    print(form_json)
+
+    # Verify that the request came from Slack
+    verify_slack_token(form_json["token"])
+
+    # Check to see what the user's selection was and update the message accordingly
+    selection = form_json["actions"][0]["value"]
+    abc = json.loads(selection)
+    answer_value = abc["value"]
+    answer_que = abc["qid"]
+    answer_survey = abc["surveyid"]
+    u_id = form_json['user']['id']
+    name = form_json['user']['name']
+    
+    print("Value is: ",answer_value)
+    print("QID is:", answer_que)
+    print("surveyid is : ", answer_survey)
+    print("This is the ID:   ",id)
+    print("Name:  ",name)
+    
+    new_answer = Answer(u_id,answer_que,answer_survey,answer_value)
+    db.session.add(new_answer)
+    db.session.commit()
+
+
+    response = sc.api_call(
+      "chat.update",
+      channel=form_json["channel"]["id"],
+      ts=form_json["message_ts"],
+      text="Thank you! :smile:",
+      attachments=[] # empty `attachments` to clear the existing massage attachments
+    )
+
+    # Send an HTTP 200 response with empty body so Slack knows we're done here
+    return make_response("", 200)
+
+@app.route("/user/data", methods=["GET"])
+def get_user():
+    all_questions = Question.query.all()
+    result = users_schema1.dump(all_questions)
+    return jsonify(result.data)
 
 if __name__ == '__main__':
     app.debug = True
