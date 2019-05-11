@@ -114,10 +114,11 @@ def add_user():
     op_b = request.json['optionB']
     op_c = request.json['optionC']
     op_d = request.json['optionD']
+    questType = request.json['questionType']
     
     print(question1,op_a,op_b,op_c,op_d)
     
-    new_question = Question(1,'Multiple Choice',question1,op_a,op_b,op_c,op_d)
+    new_question = Question(1,questType,question1,op_a,op_b,op_c,op_d)
     db.session.add(new_question)
     db.session.commit()
     
