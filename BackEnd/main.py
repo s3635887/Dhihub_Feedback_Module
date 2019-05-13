@@ -130,64 +130,151 @@ def add_user():
     # op_b_value = "Value: "+op_b + " qid: "+str(question_id) + " sid: "+str(survey_id)
     # op_c_value = "Value: "+op_c + " qid: "+str(question_id) + " sid: "+str(survey_id)
     # op_d_value = "Value: "+op_d + " qid: "+str(question_id) + " sid: "+str(survey_id)
-
-    op_a_value = json.dumps({
-        "value" : op_a,
-        "qid" : question_id,
-        "surveyid" : survey_id
-    })
-    op_b_value = json.dumps({
-        "value" : op_b,
-        "qid" : question_id,
-        "surveyid" : survey_id
-    })
-    op_c_value = json.dumps({
-        "value" : op_c,
-        "qid" : question_id,
-        "surveyid" : survey_id
-    })
-    op_d_value = json.dumps({
-        "value" : op_d,
-        "qid" : question_id,
-        "surveyid" : survey_id
-    })
-
-    print(op_a_value)
     
-    attachments_json = [
-    {
-        "fallback": "Upgrade your Slack client to use messages like these.",
-        "color": "#3AA3E3",
-        "attachment_type": "default",
-        "callback_id": "menu_options_2319",
-        "actions": [
-            {
-                "name": "low",
-                "text": op_a,
-                "type": "button",
-                "value": op_a_value
-            },
-            {
-                "name": "high",
-                "text": op_b,
-                "type": "button",
-                "value": op_b_value
-            },
-            {
-                "name": "high",
-                "text": op_c,
-                "type": "button",
-                "value": op_c_value
-            },
-            {
-                "name": "high",
-                "text": op_d,
-                "type": "button",
-                "value": op_d_value
-            }
+    if questType == 4:
+    
+        op_a_value = json.dumps({
+            "value" : op_a,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+        op_b_value = json.dumps({
+            "value" : op_b,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+        op_c_value = json.dumps({
+            "value" : op_c,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+        op_d_value = json.dumps({
+            "value" : op_d,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+
+        print(op_a_value)
+    
+        attachments_json = [
+        {
+            "fallback": "Upgrade your Slack client to use messages like these.",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "callback_id": "menu_options_2319",
+            "actions": [
+                {
+                    "name": "low",
+                    "text": op_a,
+                    "type": "button",
+                    "value": op_a_value
+                },
+                {
+                    "name": "high",
+                    "text": op_b,
+                    "type": "button",
+                    "value": op_b_value
+                },
+                {
+                    "name": "high",
+                    "text": op_c,
+                    "type": "button",
+                    "value": op_c_value
+                },
+                {
+                    "name": "high",
+                    "text": op_d,
+                    "type": "button",
+                    "value": op_d_value
+                }
+            ]
+        }
         ]
-    }
-]
+
+    elif questType == 3 :
+        op_a_value = json.dumps({
+            "value" : op_a,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+        op_b_value = json.dumps({
+            "value" : op_b,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+        op_c_value = json.dumps({
+            "value" : op_c,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+
+        print(op_a_value)
+    
+        attachments_json = [
+        {
+            "fallback": "Upgrade your Slack client to use messages like these.",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "callback_id": "menu_options_2319",
+            "actions": [
+                {
+                    "name": "low",
+                    "text": op_a,
+                    "type": "button",
+                    "value": op_a_value
+                },
+                {
+                    "name": "high",
+                    "text": op_b,
+                    "type": "button",
+                    "value": op_b_value
+                },
+                {
+                    "name": "high",
+                    "text": op_c,
+                    "type": "button",
+                    "value": op_c_value
+                }
+            ]
+        }
+        ]
+
+    elif questType == 2:
+        op_a_value = json.dumps({
+            "value" : op_a,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+        op_b_value = json.dumps({
+            "value" : op_b,
+            "qid" : question_id,
+            "surveyid" : survey_id
+        })
+
+        print(op_a_value)
+    
+        attachments_json = [
+        {
+            "fallback": "Upgrade your Slack client to use messages like these.",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "callback_id": "menu_options_2319",
+            "actions": [
+                {
+                    "name": "low",
+                    "text": op_a,
+                    "type": "button",
+                    "value": op_a_value
+                },
+                {
+                    "name": "high",
+                    "text": op_b,
+                    "type": "button",
+                    "value": op_b_value
+                }
+            ]
+        }
+        ]
 
     # Send a message with the above attachment, asking the user if they want coffee
     sc.api_call(
@@ -197,6 +284,9 @@ def add_user():
     as_user = True,
     attachments=attachments_json
     )
+
+
+    
     # print(sc.api_call
     # (
     #     "chat.postMessage",
@@ -255,11 +345,15 @@ def get_user():
     result = users_schema1.dump(all_questions)
     return jsonify(result.data)
 
+@app.route("/user/answer/data", methods=["GET"])
+def get_answer():
+    all_answer = Answer.query.all()
+    ans=users_schema3.dump(all_answer)
+    return jsonify(ans)
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
-
-
 
 
 

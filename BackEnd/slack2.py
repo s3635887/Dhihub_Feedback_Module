@@ -20,10 +20,10 @@ def send_message():
     print(sc.api_call
     (
         "chat.postMessage",
-        channel = "#random",
+        channel = "UGX2TGTFU",
         text = message,
         attachments = [{"pretext": "Would you like to play a game?"}],
-        as_user = False 	
+        as_user =  True	
     )
     )
 
