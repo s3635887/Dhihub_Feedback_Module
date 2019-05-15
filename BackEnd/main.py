@@ -352,7 +352,7 @@ def get_answer():
 def get_user_details():
     all_user_data = User_info.query.all()
     all_user = user_schema2.dump(all_user_data)
-    return jsonify(all_user)
+    return jsonify(all_user.data)
 
 if __name__ == '__main__':
     app.debug = True
