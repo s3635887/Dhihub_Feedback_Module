@@ -346,7 +346,7 @@ def get_user():
 def get_answer():
     all_answer = Answer.query.all()
     ans=users_schema3.dump(all_answer)
-    return jsonify(ans)
+    return jsonify(ans.data)
 
 @app.route("/user/info", methods=["GET"])
 def get_user_details():
