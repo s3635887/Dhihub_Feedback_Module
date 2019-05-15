@@ -126,10 +126,7 @@ def add_user():
     from_que_get_id = user_schema1.dump(last_que)
     question_id = from_que_get_id.data['que_id']
     survey_id = from_que_get_id.data['SurveyID']
-    # op_a_value = "Value: "+op_a + " qid: "+str(question_id) + " sid: "+str(survey_id)
-    # op_b_value = "Value: "+op_b + " qid: "+str(question_id) + " sid: "+str(survey_id)
-    # op_c_value = "Value: "+op_c + " qid: "+str(question_id) + " sid: "+str(survey_id)
-    # op_d_value = "Value: "+op_d + " qid: "+str(question_id) + " sid: "+str(survey_id)
+    
     
     if questType == 4:
     
@@ -350,6 +347,12 @@ def get_answer():
     all_answer = Answer.query.all()
     ans=users_schema3.dump(all_answer)
     return jsonify(ans)
+
+@app.route("/user/info", methods=["GET"])
+def get_user_details():
+    all_user_data = User_info.query.all()
+    all_user = user_schema2.dump(all_user_data)
+    return jsonify(all_user)
 
 if __name__ == '__main__':
     app.debug = True
