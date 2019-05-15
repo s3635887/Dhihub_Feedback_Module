@@ -349,7 +349,7 @@ def get_user():
 def get_answer():
     all_answer = Answer.query.all()
     ans=users_schema3.dump(all_answer)
-    return jsonify(ans)
+    return jsonify(ans.data)
 
 if __name__ == '__main__':
     app.debug = True
