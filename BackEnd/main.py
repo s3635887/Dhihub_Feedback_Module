@@ -273,7 +273,7 @@ def add_user():
         }
         ]
 
-    # Send a message with the above attachment, asking the user if they want coffee
+    # Send a message with the above attachment
     sc.api_call(
     "chat.postMessage",
     channel="UGX2TGTFU",
@@ -283,15 +283,6 @@ def add_user():
     )
 
 
-    
-    # print(sc.api_call
-    # (
-    #     "chat.postMessage",
-    #     channel = "#random",
-    #     text = question,
-    #     as_user = False 	
-    # )
-    # )
 
     return jsonify(new_question)
 
@@ -351,7 +342,7 @@ def get_answer():
 @app.route("/user/info", methods=["GET"])
 def get_user_details():
     all_user_data = User_info.query.all()
-    all_user = user_schema2.dump(all_user_data)
+    all_user = users_schema2.dump(all_user_data)
     return jsonify(all_user.data)
 
 if __name__ == '__main__':
