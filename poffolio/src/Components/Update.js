@@ -1,0 +1,86 @@
+import React, {Component} from 'react'
+import axios from 'axios'
+import Header from '../Header'
+class PostForm extends Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            question:"How do you think about the lecture today?",
+            optionA:"very good",
+            optionB:"good",
+            optionC:"so so",
+            optionD:"bad",
+            questionType:4
+        }
+        this.updateOnClick = this.updateOnClick.bind(this)
+    }
+
+updateOnClick(){
+    alert("Update successful!!!!!")
+}
+
+changeHandler = (e) => {
+    this.setState({[e.target.name]: e.target.value})
+}
+
+submitHandler = e => {
+    
+}
+
+
+render() {
+    const {question, optionA, optionB, optionC, optionD} = this.state
+    return (
+            <div class="questionair">
+                <Header/>
+                <form onSubmit={this.submitHandler}>
+                <h2>Questionnaire</h2>
+                    <div>
+                        <textarea id="taTitle" rows="4" cols="50"
+                            name="question"
+                            value={question}
+                            onChange={this.changeHandler}/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <div class="text">
+                            A:<input id="opA4" type="text" 
+                                    name="optionA"
+                                    value={optionA}
+                                    onChange={this.changeHandler}
+                                    />
+                        </div>
+                        <br/>
+                        <div class="text">
+                            B:<input id="opB4" type="text"
+                                    name="optionB"
+                                    value={optionB}
+                                    onChange={this.changeHandler}
+                                    />
+                        </div>
+                        <br/>
+                        <div class="text">
+                            C:<input id="opC4" type="text"
+                                    name="optionC"
+                                    value={optionC}
+                                    onChange={this.changeHandler}
+                                    />
+                        </div>
+                        <br/>
+                        <div class="text">
+                            D:<input id="opD4" type="text"
+                                    // name="optionD"
+                                    value={optionD}
+                                    onChange={this.changeHandler}
+                                    />
+                        </div>
+
+                    </div>
+                    <button type="submit" onClick={this.updateOnClick}>Update</button>
+                </form>
+            </div>
+        )
+    }
+}
+
+export default PostForm

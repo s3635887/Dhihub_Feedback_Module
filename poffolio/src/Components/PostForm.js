@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import axios from 'axios'
+import Header from '../Header'
 class PostForm extends Component {
     constructor(props){
         super(props)
@@ -239,7 +240,7 @@ render() {
 
         return (
             <div class="questionair">
-                
+                <Header/>
                 <form onSubmit={this.submitHandler}>
                 <h2>Questionnaire</h2>
                     <div>

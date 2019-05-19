@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Header from '../Header'
 
 class Jokes extends Component {
     constructor(){
@@ -14,6 +15,7 @@ class Jokes extends Component {
         fetch('http://127.0.0.1:5000/user/data')
             .then(response => response.json())
             .then(json => this.setState({questions:json}));
+        
     }
 
     fetchQuestions = () => {
@@ -22,10 +24,13 @@ class Jokes extends Component {
     render() {
         return(
             <div>
+                <Header/>
                 <h2>Survey review</h2>
                 
+                <div>
                 {/* <button onClick={this.fetchQuestions}>Click me</button> */}
                 {
+                    
                     this.state.questions.map(ques => {
                         const { optionA, optionB, optionC, optionD, que_id, question } = ques;
                         let que = <div></div>
@@ -33,7 +38,9 @@ class Jokes extends Component {
                         let opB = <div></div>
                         let opC = <div></div>
                         let opD = <div></div>
-                        let form = <div></div>
+                        let quesList = <div></div>
+                        let submitForm = <div></div>
+                        console.log(ques)
                         this.state.answers.map(ans => {
                             const {UID, SurveyID, que_id, answer} = ans
                             if(ans.que_id == ques.que_id){
@@ -73,8 +80,8 @@ class Jokes extends Component {
                                         </div>
                                 }
                                 
-                                form = 
-                                        <div class="row table" key={que_id} >
+                                quesList = 
+                                        <div class="row table" key={que_id}>
                                             {que}
                                             {opA}
                                             {opB}
@@ -88,13 +95,14 @@ class Jokes extends Component {
                         })
                         
                         return (
-                            <div>
-                                {form}
+                            <div class="questionForm">
+                                {quesList}
                             </div>
                             
                         )
                     })
                 }
+                </div>
             </div>
         )
     }

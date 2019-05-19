@@ -22,8 +22,9 @@ html {
 /* -------------------------------------------*/
 
 .row {
-    max-width: 1140px;
+    max-width: 500px;
     /* margin: 0 auto 0 auto; */
+    background-color: #e67e22;
     margin: 0 auto;
 }
 
@@ -96,7 +97,7 @@ h3 {
 
 /* ------------BUTTON ---------------*/
 .btn:link,
-.btn:visited {
+.btn:visited{
     display: inline-block;
     padding: 10px 30px;
     font-weight: 300;
@@ -232,5 +233,13 @@ header {
 }
 
 .table{
+    
     margin-left: 25%;
+}
+
+.submitForm{
+    position: fixed;
+    max-width: 15%;
+    margin-left: 10%;
+    /* background-color: #6eaae7; */
 }

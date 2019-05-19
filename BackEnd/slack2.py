@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-slack_token = 'xoxb-575060474148-600534221555-p4pSLvMQO4ZdbognZ9Z9PiFu'
+slack_token = 'xoxb-575060474148-600534221555-oq2I4WPmJBSiNmT34br2dNJS'
 sc = SlackClient(slack_token)
 
 
@@ -20,7 +20,7 @@ def send_message():
     print(sc.api_call
     (
         "chat.postMessage",
-        channel = "UGX2TGTFU",
+        channel = "UHS60343X",
         text = message,
         attachments = [{"pretext": "Would you like to play a game?"}],
         as_user =  True	
