@@ -12,10 +12,19 @@ class PostForm extends Component {
             optionD:"",
             questionType:4
         }
+        this.data = {surveys:[]}
         this.changeSurveyList = this.changeSurveyList.bind(this)
         this.changeOption = this.changeOption.bind(this)
         this.submitHandler = this.submitHandler.bind(this)
     }
+
+componentDidMount(){
+    fetch('http://127.0.0.1:5000/user/survey')
+        .then(response => response.json())
+        .then(json => this.data.surveys = json)
+        // .then(json => this.setState({questions:json}));
+    console.log(this.data.surveys)
+}
 changeSurveyList(){
 
 }
