@@ -10,7 +10,7 @@ class Introduction extends Component{
                         <ul className="main-nav">
                             <li><a href="#">Home</a></li>
                             <li><a href="#">Products</a></li>
-                            <li><a href="/create_survey">features</a></li>
+                            <li><a href="#">features</a></li>
                             <li><a href="/login">Log In</a></li>
                         </ul>
                     </div>
