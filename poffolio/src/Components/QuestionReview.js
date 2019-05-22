@@ -41,7 +41,7 @@ class QuestionReview extends Component {
 
 
         let data = {questions:[], subUsers:[]}
-        data.question = this.state.questions
+        data.questions = this.state.questions
 
 
         // let data = {question:{}, subUsers:[]}
