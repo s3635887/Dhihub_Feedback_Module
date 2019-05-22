@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Jokes from './Components/Jokes'
 import PostForm from './Components/PostForm'
-import Header from './Header';
 class App extends Component {
 
     constructor(){

@@ -1,6 +1,4 @@
 import React, {Component} from 'react'
-import axios from 'axios'
-import Header from '../Header'
 class PostForm extends Component {
     constructor(props){
         super(props)
@@ -31,8 +29,7 @@ submitHandler = e => {
 render() {
     const {question, optionA, optionB, optionC, optionD} = this.state
     return (
-            <div class="questionair">
-                <Header/>
+            <div classname="questionair">
                 <form onSubmit={this.submitHandler}>
                 <h2>Questionnaire</h2>
                     <div>
@@ -43,7 +40,7 @@ render() {
                         <br/>
                         <br/>
                         <br/>
-                        <div class="text">
+                        <div classname="text">
                             A:<input id="opA4" type="text" 
                                     name="optionA"
                                     value={optionA}
@@ -51,7 +48,7 @@ render() {
                                     />
                         </div>
                         <br/>
-                        <div class="text">
+                        <div classname="text">
                             B:<input id="opB4" type="text"
                                     name="optionB"
                                     value={optionB}
@@ -59,7 +56,7 @@ render() {
                                     />
                         </div>
                         <br/>
-                        <div class="text">
+                        <div classname="text">
                             C:<input id="opC4" type="text"
                                     name="optionC"
                                     value={optionC}
@@ -67,7 +64,7 @@ render() {
                                     />
                         </div>
                         <br/>
-                        <div class="text">
+                        <div classname="text">
                             D:<input id="opD4" type="text"
                                     // name="optionD"
                                     value={optionD}

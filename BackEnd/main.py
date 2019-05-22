@@ -378,7 +378,6 @@ def get_survey_details():
     all_survey_details = users_schema.dump(all_survey_details)
     return jsonify(all_survey_details.data)
 
-
 if __name__ == '__main__':
     app.debug = True
     app.run()
