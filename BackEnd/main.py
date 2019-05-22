@@ -372,10 +372,18 @@ def get_user_details():
     all_user = users_schema2.dump(all_user_data)
     return jsonify(all_user.data)
 
-@app.route("/user/survey", methods=["GET"])
+@app.route("/user/survey", methods=["POST","GET"])
 def get_survey_details():
-    all_survey_details = Survey.query.all()
-    all_survey_details = users_schema.dump(all_survey_details)
+    if request.method == "POST":
+        sur_id = request.json['id']
+        sur_name = request.json['title']
+        sur = Survey(sur_id,sur_name)
+        db.session.add(sur)
+        db.session.commit()
+    else:
+        all_survey_details = Survey.query.all()
+        all_survey_details = users_schema.dump(all_survey_details)
+    
     return jsonify(all_survey_details.data)
 
 if __name__ == '__main__':
