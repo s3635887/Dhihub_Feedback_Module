@@ -128,7 +128,7 @@ def add_question():
 def submit_question():
 
     users = request.json['subUsers']
-    ques = request.json['question']
+    ques = request.json['questions']
     for que in ques:
         # print("q: ",q)
         # s = q['question']
@@ -371,6 +371,12 @@ def get_user_details():
     all_user_data = User_info.query.all()
     all_user = users_schema2.dump(all_user_data)
     return jsonify(all_user.data)
+
+@app.route("/user/survey", methods=["GET"])
+def get_survey_details():
+    all_survey_details = Survey.query.all()
+    all_survey_details = users_schema.dump(all_survey_details)
+    return jsonify(all_survey_details.data)
 
 if __name__ == '__main__':
     app.debug = True
