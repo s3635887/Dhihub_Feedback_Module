@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import Header from '../Header'
-import axios from 'axios';
+import axios from 'axios'
+// import Header from '../Header'
 
 class QuestionReview extends Component {
     constructor(){
@@ -38,20 +38,16 @@ class QuestionReview extends Component {
     }
     submitOnClick(){
         var userCheck = []
-
-
-        let data = {questions:[], subUsers:[]}
-        data.question = this.state.questions
-
-
         // let data = {question:{}, subUsers:[]}
         // data.question = this.state.questions[this.state.questions.length - 1]
+        let data = {questions:[], subUsers:[]}
+        data.questions = this.state.questions
         for (var i = 0 ; i < this.state.users.length; i++){
             userCheck[i] = document.getElementById(this.state.users[i].UID)
         }
-        for (var i = 0 ; i < this.state.users.length; i++){
-            if(userCheck[i].checked == true){
-                data.subUsers.push(this.state.users[i].UID)
+        for (var j = 0 ; j < this.state.users.length; j++){
+            if(userCheck[j].checked === true){
+                data.subUsers.push(this.state.users[j].UID)
             }
         }
         console.log(data)
@@ -62,29 +58,28 @@ class QuestionReview extends Component {
             .catch(error =>
                 console.log(error)
             )
+        // fetch('http://127.0.0.1:5000/user/submit', {
+        //         method: 'POST', 
+        //         headers:{
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
     }
 
     render() {
         return(
-            <div>
-                <Header/>
-                <h2>Questions review</h2>
-                {/* <div class="submitForm">
-                    <input type="checkbox" id="trung"/>Trung<br/>
-                    <input type="checkbox" id="Pavan"/>Pavan<br/>
-                    <input type="checkbox" id="Rana"/>Rana<br/>
-                    <input type="checkbox" id="Richa"/>Richa<br/>
-                    <input type="checkbox" id="Christina"/>Christina<br/>
-                    <input type="checkbox" id="Yuri"/>Yuri<br/>
-                    <button type="button">Submit</button>
-                </div> */}
-                <div className="submitForm">
+            <div className="mainForm">
+                {/* <Header/> */}
+                {/* <form> */}
+                
+                <div className="usersForm">
                 {
                     this.state.users.map(user => {
                         const {Name, UID} = user
                         let form = <div></div>
                         form = 
-                                <div>
+                                <div className="userForm">
                                     <input type="checkbox" id={UID} onClick={this.checkboxOnClick}/>{Name}
                                 </div>
                         return(
@@ -95,8 +90,14 @@ class QuestionReview extends Component {
                         )
                     })
                 }
-                <button type="submit" onClick={this.submitOnClick}>Submit</button>
+                
+                <div className="userForm">
+                    <button type="submit" onClick={this.submitOnClick}>Submit</button>
                 </div>
+                </div>
+
+                <div className="questionForm">
+                <h2>Questions review</h2>
                 {
                     this.state.questions.map(ques => {
                         const { optionA, optionB, optionC, optionD, que_id, question } = ques;
@@ -107,10 +108,8 @@ class QuestionReview extends Component {
                         let opD = <div></div>
                         let form = <div></div>
                         que =   <div className="row">
-                                    <div className="col span-1-of-1">
+                                    <div className="col span-1-of-1 quesTitle quesLength">
                                         <strong>{que_id}. {question}</strong>
-                                            <a href="/update_question" onClick={this.updateOnClick}>Update</a>| 
-                                            <a href="#" onClick={this.deleteOnClick}>Delete</a>
                                     </div>
                                 </div>
                                 if(optionA != null){
@@ -125,6 +124,7 @@ class QuestionReview extends Component {
                                         <div className="row">
                                             <div className="col span-1-of-10">B:</div>
                                             <div className="col span-2-of-10">{optionB}</div>
+                                            
                                         </div>
                                 }
                                 if(optionC != null){
@@ -149,8 +149,14 @@ class QuestionReview extends Component {
                                             {opB}
                                             {opC}
                                             {opD}
+                                            <div className="quesLength">
+                                                <a className="col span-1-of-4" href="/update_question" onClick={this.updateOnClick}>Update</a>
+                                                <a className="col span-2-of-4"href="#" onClick={this.deleteOnClick}>Delete</a>
+                                                <div className="col span-3-of-3"></div>
+                                            </div>
+                                            
                                             <br/>
-                                            <hr/>
+                                            {/* <hr/> */}
                                         </div>
                            
                         return (
@@ -161,6 +167,7 @@ class QuestionReview extends Component {
                         )
                     })
                 }
+                </div>
             </div>
         )
     }

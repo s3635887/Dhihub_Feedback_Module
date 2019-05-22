@@ -1,6 +1,8 @@
 /* -------------------------------------------*/
 /* BASIC SETUP */
 /* -------------------------------------------*/
+/* @import url('https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css'); */
+
 * {
     margin: 0;
     padding: 0;
@@ -14,7 +16,7 @@ html {
     font-family: 'Lato', sans-serif;
     font-weight: 300;
     font-size: 20px;
-    text-rendering: optimizeLegibility
+    text-rendering: optimizeLegibility;
 }
 
 /* -------------------------------------------*/
@@ -22,9 +24,17 @@ html {
 /* -------------------------------------------*/
 
 .row {
-    max-width: 500px;
+    max-width: 1140px;
     /* margin: 0 auto 0 auto; */
-    background-color: #e67e22;
+    /* background-color: #e67e22; */
+    
+    margin: 0 auto;
+}
+.questionRow {
+    max-width: 1140px;
+    /* margin: 0 auto 0 auto; */
+    /* background-color: #e67e22; */
+    
     margin: 0 auto;
 }
 
@@ -200,6 +210,8 @@ header {
     margin: 0 auto;
 }
 
+
+
 .footer-nav {
     list-style: none;
     float: left;
@@ -229,17 +241,112 @@ header {
     margin-right: auto;
     float:inherit;
     border-radius: 200px;
-
 }
 
 .table{
-    
+    /* border: 1px solid cornflowerblue; */
     margin-left: 25%;
 }
 
-.submitForm{
+.mainForm{
     position: fixed;
-    max-width: 15%;
-    margin-left: 10%;
-    /* background-color: #6eaae7; */
+    width: 100%;
+    height: 100%;
+    top: 70px;
+    background-color: orange;
+}
+
+.usersForm{
+    position: absolute;
+    width: 25%;
+    height: 100%;;
+    top: 0px;
+    left: 0px;
+    background-color: #6eaae7;
+    overflow: scroll;
+}
+
+.userForm{
+    height: 50px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 30px;
+    padding-top: 10px;
+    border: 1px solid black;
+}
+
+.userForm button{
+    position: fixed;
+    top: 70px;
+    left: 210px;
+    height: 50px;
+    width: 150px;
+}
+
+.questionForm{
+    position: absolute;
+    top: 0px;
+    left: 25%;
+    width: 75%;
+    height: 100%;
+    /* margin: auto; */
+    background-color: aqua;
+    overflow: scroll;
+}
+
+.logoForm{
+    position: absolute;
+    width: 25%;
+    height: 100%;;
+    top: 0px;
+    left: 0px;
+    background-color: #6eaae7;
+    overflow: hidden;
+}
+
+.logoForm img{
+    width: 200px;
+    height: 300px;
+    margin-top: 50px;
+    margin-left: 30px;
+}
+
+.savingForm{
+    margin-left: 30%;
+    margin-top: 0px;
+}
+
+.savingForm button{
+    margin-left: 30%;
+    width: 100px;
+    height: 40px;
+}
+
+.quesTitle{
+    background-color: #e7a3a3;
+}
+
+.row a{
+    background-color: #192747;
+    width: 100px;
+    height: 30px;
+}
+
+.quesLength{
+    width: 75%;
+}
+
+
+
+.questionair{
+    margin-top: 100px;
+    margin-left: 20%;
+    position: fixed;
+
+}
+
+
+
+.headerHandle{
+    border: 1px solid blue;
 }
