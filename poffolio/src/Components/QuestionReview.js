@@ -97,7 +97,15 @@ class QuestionReview extends Component {
                 </div>
 
                 <div className="questionForm">
-                <h2>Questions review</h2>
+                    <h2>Questions review</h2>
+                    <div className="row col">
+                        Survey:
+                        <select id="surveyList">
+                            <option value="1">20/May/2019</option>
+                            <option value="2">21/May/2019</option>
+                            <option value="3">22/May/2019</option>
+                        </select>
+                    </div>
                 {
                     this.state.questions.map(ques => {
                         const { optionA, optionB, optionC, optionD, que_id, question } = ques;

@@ -12,10 +12,13 @@ class PostForm extends Component {
             optionD:"",
             questionType:4
         }
+        this.changeSurveyList = this.changeSurveyList.bind(this)
         this.changeOption = this.changeOption.bind(this)
         this.submitHandler = this.submitHandler.bind(this)
     }
+changeSurveyList(){
 
+}
 changeOption(){
     var value = document.getElementById("mySelect").value
     if(value === "FourOptionQuestion"){
@@ -273,8 +276,15 @@ render() {
                     <div className="questionForm">
                         <h2>Questionnaire</h2>
                         <form onSubmit={this.submitHandler}>
-                        
+                            
                             <div className="savingForm">
+                                Survey:
+                                <select id="surveyList">
+                                    <option value="1">20/May/2019</option>
+                                    <option value="2">21/May/2019</option>
+                                    <option value="3">22/May/2019</option>
+                                </select>
+                                <br/>
                                 <textarea id="taTitle" rows="4" cols="50"
                                     // name="question"
                                     onChange={this.changeHandler}/>
