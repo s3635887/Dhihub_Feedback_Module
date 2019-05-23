@@ -21,6 +21,7 @@ class PostForm extends Component {
             }
         }
         this.SurveyID = "";
+        this.survey = {id:"", title:""}
         this.changeOptionSurveyList = this.changeOptionSurveyList.bind(this)
         this.changeOption = this.changeOption.bind(this)
         this.submitHandler = this.submitHandler.bind(this)
@@ -63,13 +64,12 @@ changeHandler = (e) => {
 }
 
 submitCreateSurvey(){
-
     var surveyID = parseInt(this.state.surveys[this.state.surveys.length - 1].SurveyID, 10)  + 1
     var surveyTitle  = document.getElementById("surveyTitle").value
     // this.setState({objectSurvey:{id: surveyID, title: surveyTitle}})
-    this.state.objectSurvey.id = surveyID
-    this.state.objectSurvey.title = surveyTitle
-    console.log(this.state.objectSurvey)
+    this.survey.id = surveyID
+    this.survey.title = surveyTitle
+    // console.log(this.state.objectSurvey)
     // this.setState({objectSurvey:{id:}})
     
     if(surveyTitle != ""){
@@ -78,11 +78,20 @@ submitCreateSurvey(){
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(this.state.objectSurvey)
+            body: JSON.stringify(this.survey)
         })
+        // .then(response => {
+        //     this.setState(prevState => ({
+        //         surveys:[this.survey, ...prevState.surveys]
+        //     }))
+        // })
+        
+        
     }
     else
         alert("Survey Title cannot be null!!!!")
+
+    
 }
 
 submitHandler = e => {
