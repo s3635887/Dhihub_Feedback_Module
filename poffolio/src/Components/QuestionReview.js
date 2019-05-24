@@ -5,11 +5,13 @@ import axios from 'axios'
 class QuestionReview extends Component {
     constructor(){
         super()
-        this.state = {questions: [], users:[], subUsers:[]};
+        this.state = {questions: [], subQuestions:[], users:[], subUsers:[], surveys:[], SurveyID:"1"};
+        this.SurveyID = "";
         this.deleteOnClick = this.deleteOnClick.bind(this)
         this.updateOnClick = this.updateOnClick.bind(this)
         this.checkboxOnClick = this.checkboxOnClick.bind(this)
         this.submitOnClick = this.submitOnClick.bind(this)
+        this.changeOptionSurveyList = this.changeOptionSurveyList.bind(this)
         // this.showmore = this.showmore.bind(this);
     }
     
@@ -21,6 +23,16 @@ class QuestionReview extends Component {
         fetch('http://127.0.0.1:5000/user/info')
             .then(response => response.json())
             .then(json => this.setState({users:json}));
+        fetch('http://127.0.0.1:5000/user/survey')
+            .then(response => response.json())
+            .then(json => this.setState({surveys:json}));
+    }
+
+    changeOptionSurveyList(){
+        var value = document.getElementById("surveySelect").value
+        this.SurveyID = value
+        this.setState({SurveyID: value})
+        
     }
 
     fetchQuestions = () => {
@@ -34,14 +46,12 @@ class QuestionReview extends Component {
     }
     checkboxOnClick(){
         
-        // console.log(user)
     }
     submitOnClick(){
         var userCheck = []
-        // let data = {question:{}, subUsers:[]}
-        // data.question = this.state.questions[this.state.questions.length - 1]
         let data = {questions:[], subUsers:[]}
-        data.questions = this.state.questions
+        // data.questions = this.state.questions
+        
         for (var i = 0 ; i < this.state.users.length; i++){
             userCheck[i] = document.getElementById(this.state.users[i].UID)
         }
@@ -50,7 +60,11 @@ class QuestionReview extends Component {
                 data.subUsers.push(this.state.users[j].UID)
             }
         }
-        console.log(data)
+        for (var k = 0; k < this.state.questions.length; k++){
+            if(this.state.questions[k].SurveyID == this.state.SurveyID){
+                data.questions.push(this.state.questions[k])
+            }
+        }
         axios.post('http://127.0.0.1:5000/user/submit', data)
             .then(response => {
                 console.log(response)
@@ -58,21 +72,21 @@ class QuestionReview extends Component {
             .catch(error =>
                 console.log(error)
             )
-        // fetch('http://127.0.0.1:5000/user/submit', {
-        //         method: 'POST', 
-        //         headers:{
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
     }
 
     render() {
+        let surveySelect = document.getElementById("surveySelect")
+        this.state.surveys.map(survey => {
+        const{SurveyID, Survey_Title} = survey
+        var newOption = document.createElement("option")
+        newOption.id = SurveyID
+        newOption.value = SurveyID
+        newOption.text = Survey_Title
+        if(surveySelect != null && surveySelect.length < this.state.surveys.length)
+            surveySelect.add(newOption)
+        })
         return(
             <div className="mainForm">
-                {/* <Header/> */}
-                {/* <form> */}
-                
                 <div className="usersForm">
                 {
                     this.state.users.map(user => {
@@ -100,22 +114,26 @@ class QuestionReview extends Component {
                     <h2>Questions review</h2>
                     <div className="row col">
                         Survey:
-                        <select id="surveyList">
-                            <option value="1">20/May/2019</option>
-                            <option value="2">21/May/2019</option>
-                            <option value="3">22/May/2019</option>
+                        <select id="surveySelect" onChange={this.changeOptionSurveyList}>
                         </select>
                     </div>
-                {
-                    this.state.questions.map(ques => {
-                        const { optionA, optionB, optionC, optionD, que_id, question } = ques;
+                    {
+
+                        this.state.questions.map(ques => {
+                        const {SurveyID, optionA, optionB, optionC, optionD, que_id, question } = ques;
                         let que = <div></div>
                         let opA = <div></div>
                         let opB = <div></div>
                         let opC = <div></div>
                         let opD = <div></div>
                         let form = <div></div>
-                        que =   <div className="row">
+                        // if(SurveyID === this.state.SurveyID){
+                        //     console.log("equal")
+                        // }
+                        console.log(this.state.SurveyID)
+                        if(SurveyID == this.state.SurveyID){
+                            
+                            que =   <div className="row">
                                     <div className="col span-1-of-1 quesTitle quesLength">
                                         <strong>{que_id}. {question}</strong>
                                     </div>
@@ -167,14 +185,15 @@ class QuestionReview extends Component {
                                             {/* <hr/> */}
                                         </div>
                            
-                        return (
-                            <div key={que_id}>
-                                {form}
-                            </div>
-                            
-                        )
+                            return (
+                                <div key={que_id}>
+                                    {form}
+                                </div>
+                            )
+                        }
+                        
                     })
-                }
+                    }
                 </div>
             </div>
         )

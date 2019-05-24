@@ -5,9 +5,12 @@ class Jokes extends Component {
     constructor(){
         super()
         
-        this.state = { answers:[], questions: [], users:[], userID:""};
+        this.state = { answers:[], questions: [], users:[], surveys:[], SurveyID:"1"};
+        this.userID = "";
+        this.SurveyID = "";
         this.checkboxOnClick = this.checkboxOnClick.bind(this)
         this.submitOnClick = this.submitOnClick.bind(this)
+        this.changeOptionSurveyList = this.changeOptionSurveyList.bind(this)
     }
     
     componentDidMount(){
@@ -20,7 +23,17 @@ class Jokes extends Component {
         fetch('http://127.0.0.1:5000/user/info')
             .then(response => response.json())
             .then(json => this.setState({users:json}));
+        fetch('http://127.0.0.1:5000/user/survey')
+            .then(response => response.json())
+            .then(json => this.setState({surveys:json}));
     }
+
+    changeOptionSurveyList(){
+        var value = document.getElementById("surveySelect").value
+        this.SurveyID = value
+        this.setState({SurveyID: value})
+    }
+
     changeHandler = (e) => {
         this.setState({[e.target.name]: e.target.value})
     }
@@ -28,7 +41,7 @@ class Jokes extends Component {
     checkboxOnClick = e => {
         for(var i = 0; i < this.state.users.length; i++){
             if(document.getElementById(this.state.users[i].UID).checked === true){
-                this.state.userID = this.state.users[i].UID
+                this.userID = this.state.users[i].UID
                 break
             }
         }
@@ -39,6 +52,18 @@ class Jokes extends Component {
     }
 
     render() {
+        
+        let surveySelect = document.getElementById("surveySelect")
+    
+        this.state.surveys.map(survey => {
+        const{SurveyID, Survey_Title} = survey
+        var newOption = document.createElement("option")
+        newOption.id = SurveyID
+        newOption.value = SurveyID
+        newOption.text = Survey_Title
+        if(surveySelect != null && surveySelect.length < this.state.surveys.length)
+            surveySelect.add(newOption)
+        })
         return(
             <div className="mainForm">
                 {/* <Header/> */}
@@ -65,10 +90,10 @@ class Jokes extends Component {
                 <h2>Survey review</h2>
                 <div className="row col">
                         Survey:
-                        <select id="surveyList">
-                            <option value="1">20/May/2019</option>
+                        <select id="surveySelect" onChange={this.changeOptionSurveyList}>
+                            {/* <option value="1">20/May/2019</option>
                             <option value="2">21/May/2019</option>
-                            <option value="3">22/May/2019</option>
+                            <option value="3">22/May/2019</option> */}
                         </select>
                     </div>
                 <div>
@@ -84,7 +109,7 @@ class Jokes extends Component {
                         let quesList = <div></div>
                         this.state.answers.map(ans => {
                             const {UID, SurveyID, que_id, answer} = ans
-                            if(UID === this.state.userID){
+                            if(UID === this.userID && SurveyID == this.state.SurveyID){
                                 if(ans.que_id === ques.que_id){
                                     que = 
                                             <div className="row">

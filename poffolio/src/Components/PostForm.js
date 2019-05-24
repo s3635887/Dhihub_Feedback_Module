@@ -1,43 +1,97 @@
 import React, {Component} from 'react'
 import axios from 'axios'
-// import Header from '../Header'
 class PostForm extends Component {
     constructor(props){
         super(props)
         this.state = {
-            question:"",
-            optionA:"",
-            optionB:"",
-            optionC:"",
-            optionD:"",
-            questionType:4
+            surveys:[],
+            SurveyID:"1",
+            object:{
+                surveyID:"",
+                question:"",
+                optionA:"",
+                optionB:"",
+                optionC:"",
+                optionD:"",
+                questionType:4
+            },
+            objectSurvey:{
+                id:"",
+                title:""
+            }
         }
-        this.changeSurveyList = this.changeSurveyList.bind(this)
+        this.SurveyID = "";
+        this.survey = {id:"", title:""}
+        this.changeOptionSurveyList = this.changeOptionSurveyList.bind(this)
         this.changeOption = this.changeOption.bind(this)
         this.submitHandler = this.submitHandler.bind(this)
+        this.submitCreateSurvey = this.submitCreateSurvey.bind(this)
     }
-changeSurveyList(){
 
+componentDidMount(){
+    fetch('http://127.0.0.1:5000/user/survey')
+        .then(response => response.json())
+        // .then(json => this.data.surveys = json)
+        .then(json => this.setState({surveys: json}))
+        // .then(json => this.setState({questions:json}));
+    
+}
+changeOptionSurveyList(){
+    var value = document.getElementById("surveySelect").value
+    this.SurveyID = value
+    this.setState({SurveyID: value})
+    
 }
 changeOption(){
     var value = document.getElementById("mySelect").value
     if(value === "FourOptionQuestion"){
-        this.setState({questionType:4})
+        this.setState({object:{questionType:4}})
     }
     if(value === "ThreeOptionQuestion"){
-        this.setState({questionType:3})
+        this.setState({object:{questionType:3}})
     }
     if(value === "TwoOptionQuestion"){
-        this.setState({questionType:2})
+        this.setState({object:{questionType:2}})
     }
     if(value === "ShortQuestion"){
-        this.setState({questionType:1})
+        this.setState({object:{questionType:1}})
     }
     
 }
 
 changeHandler = (e) => {
     this.setState({[e.target.name]: e.target.value})
+}
+
+submitCreateSurvey(){
+    var surveyID = parseInt(this.state.surveys[this.state.surveys.length - 1].SurveyID, 10)  + 1
+    var surveyTitle  = document.getElementById("surveyTitle").value
+    // this.setState({objectSurvey:{id: surveyID, title: surveyTitle}})
+    this.survey.id = surveyID
+    this.survey.title = surveyTitle
+    // console.log(this.state.objectSurvey)
+    // this.setState({objectSurvey:{id:}})
+    
+    if(surveyTitle != ""){
+        fetch('http://127.0.0.1:5000/user/survey', {
+            method: 'POST', 
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.survey)
+        })
+        // .then(response => {
+        //     this.setState(prevState => ({
+        //         surveys:[this.survey, ...prevState.surveys]
+        //     }))
+        // })
+        
+        
+    }
+    else
+        alert("Survey Title cannot be null!!!!")
+
+    
 }
 
 submitHandler = e => {
@@ -47,6 +101,7 @@ submitHandler = e => {
     var opB = ""
     var opC = ""
     var opD = ""
+    var surveyID = document.getElementById("surveySelect").value
     if(value === "FourOptionQuestion"){
         opA = document.getElementById("opA4").value
         opB = document.getElementById("opB4").value
@@ -56,24 +111,18 @@ submitHandler = e => {
             alert("can not submit empty element!")
         }
         else{
-            this.state.question = opQ
-            this.state.optionA = opA
-            this.state.optionB = opB
-            this.state.optionC = opC
-            this.state.optionD = opD
-            // axios.post('http://127.0.0.1:5000/user', this.state)
-            // .then(response => {
-            //     console.log(response)
-            // })
-            // .catch(error =>
-            //     console.log(error)
-            // )
+            this.state.object.question = opQ
+            this.state.object.optionA = opA
+            this.state.object.optionB = opB
+            this.state.object.optionC = opC
+            this.state.object.optionD = opD
+            this.state.object.surveyID = surveyID
             fetch('http://127.0.0.1:5000/user', {
                 method: 'POST', 
                 headers:{
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(this.state)
+                body: JSON.stringify(this.state.object)
             })
             .then(response => {
                 console.log(response)
@@ -100,12 +149,13 @@ submitHandler = e => {
         }
         else{
             // this.setState({question:opQ, optionA:"Yes", optionB:"No", optionC:"", optionD:""})
-            this.state.question = opQ
-            this.state.optionA = opA
-            this.state.optionB = opB
-            this.state.optionC = opC
-            this.state.optionD = null
-            axios.post('http://127.0.0.1:5000/user', this.state)
+            this.state.object.question = opQ
+            this.state.object.optionA = opA
+            this.state.object.optionB = opB
+            this.state.object.optionC = opC
+            this.state.object.optionD = null
+            this.state.object.surveyID = surveyID
+            axios.post('http://127.0.0.1:5000/user', this.state.object)
             .then(response => {
                 console.log(response)
             })
@@ -128,12 +178,13 @@ submitHandler = e => {
         }
         else{
             // this.setState({question:opQ, optionA:"Yes", optionB:"No", optionC:"", optionD:""})
-            this.state.question = opQ
-            this.state.optionA = opA
-            this.state.optionB = opB
-            this.state.optionC = null
-            this.state.optionD = null
-            axios.post('http://127.0.0.1:5000/user', this.state)
+            this.state.object.question = opQ
+            this.state.object.optionA = opA
+            this.state.object.optionB = opB
+            this.state.object.optionC = null
+            this.state.object.optionD = null
+            this.state.object.surveyID = surveyID
+            axios.post('http://127.0.0.1:5000/user', this.state.object)
             .then(response => {
                 console.log(response)
             })
@@ -152,25 +203,18 @@ submitHandler = e => {
             alert("Cannot submit empty question!")
         }
         else{
-            this.state.question = opQ
-            this.state.optionA = null
-            this.state.optionB = null
-            this.state.optionC = null
-            this.state.optionD = null
-            // axios.post('http://127.0.0.1:5000/user', this.state)
-            // .then(response => {
-            //     console.log(response)
-            // })
-            // .catch(error =>
-            //     console.log(error)
-            // )
-
+            this.state.object.question = opQ
+            this.state.object.optionA = null
+            this.state.object.optionB = null
+            this.state.object.optionC = null
+            this.state.object.optionD = null
+            this.state.object.surveyID = surveyID
             fetch('http://127.0.0.1:5000/user', {
                 method: 'POST', 
                 headers:{
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(this.state)
+                body: JSON.stringify(this.state.object)
             })
 
 
@@ -180,12 +224,23 @@ submitHandler = e => {
         } 
     }
     e.preventDefault()
-    console.log(this.state)
+    console.log(this.state.object)
     }
 
 render() {
     let bio = React.createElement('div', null, null)
-    if(this.state.questionType === 4){
+    let surveySelect = document.getElementById("surveySelect")
+    
+    this.state.surveys.map(survey => {
+        const{SurveyID, Survey_Title} = survey
+        var newOption = document.createElement("option")
+        newOption.id = SurveyID
+        newOption.value = SurveyID
+        newOption.text = Survey_Title
+        if(surveySelect != null && surveySelect.length < this.state.surveys.length)
+            surveySelect.add(newOption)
+    })
+    if(this.state.object.questionType === 4){
             
         bio =   <div >
                         <br/>
@@ -219,7 +274,7 @@ render() {
                         </div>
                     </div>
         }
-        if(this.state.questionType === 3){
+        if(this.state.object.questionType === 3){
             bio =   <div >
                         <br/>
                         <br/>
@@ -245,7 +300,7 @@ render() {
                         </div>
                     </div>
         }
-        if(this.state.questionType === 2){
+        if(this.state.object.questionType === 2){
             bio =   <div >
                         <br/>
                         <br/>
@@ -264,7 +319,7 @@ render() {
                         </div>
                     </div>
         }
-        if(this.state.questionType === 1){
+        if(this.state.object.questionType === 1){
             bio = <div></div>
         }
 
@@ -275,18 +330,19 @@ render() {
                     </div>
                     <div className="questionForm">
                         <h2>Questionnaire</h2>
+                        <div className="createSurveyForm">
+                            <input id="surveyTitle" type="text"></input>
+                            <button type="button" onClick={this.submitCreateSurvey}>New Survey</button>
+                        </div>
                         <form onSubmit={this.submitHandler}>
-                            
                             <div className="savingForm">
                                 Survey:
-                                <select id="surveyList">
-                                    <option value="1">20/May/2019</option>
-                                    <option value="2">21/May/2019</option>
-                                    <option value="3">22/May/2019</option>
+                                
+                                <select id="surveySelect" onChange={this.changeOptionSurveyList}>
                                 </select>
+                                
                                 <br/>
                                 <textarea id="taTitle" rows="4" cols="50"
-                                    // name="question"
                                     onChange={this.changeHandler}/>
                                 <br/>
                                 <select id="mySelect" onChange={this.changeOption}>
