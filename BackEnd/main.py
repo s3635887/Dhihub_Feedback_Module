@@ -385,6 +385,16 @@ def get_survey_details():
         all_survey_details = users_schema.dump(all_survey_details)
         return jsonify(all_survey_details.data)
 
+@app.route("/user/que/delete", methods=["DELETE"])
+def que_delete():
+    queid = request.json['que_id']
+    surveyid = request.json['SurveyID']
+    que = Question.query.get(queid,surveyid)
+    db.session.delete(que)
+    db.session.commit()
+
+    return make_response("", 200)
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
