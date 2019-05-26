@@ -390,7 +390,7 @@ def que_delete(sid,qid):
     que = Question.query.get((sid,qid))
     db.session.delete(que)
     db.session.commit()
-
+    return make_response("", 200)
 # @app.route("/user/que/delete1", methods=["GET"])
 # def que1_delete():
 #     sid = 1
