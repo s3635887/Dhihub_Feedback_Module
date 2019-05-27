@@ -322,6 +322,12 @@ header {
     height: 40px;
 }
 
+.createSurveyForm{
+    float: right;
+    position: fixed;
+    top: 20px;
+    right: 3%;
+}
 
 .quesTitle{
     background-color: #e7a3a3;
