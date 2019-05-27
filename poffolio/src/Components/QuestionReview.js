@@ -109,9 +109,7 @@ class QuestionReview extends Component {
                 console.log(error)
             )
         alert("Survey is summited!!!")
-        // for (var i = 0; i < this.state.users.length; i++){
-
-        // }
+        
     }
 
     render() {
