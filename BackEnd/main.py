@@ -387,11 +387,19 @@ def get_survey_details():
 
 @app.route("/user/que/delete/<sid>/<qid>", methods=["DELETE"])
 def que_delete(sid,qid):
-    que = Question.query.get(sid,qid)
+    que = Question.query.get((sid,qid))
     db.session.delete(que)
     db.session.commit()
-
     return make_response("", 200)
+# @app.route("/user/que/delete1", methods=["GET"])
+# def que1_delete():
+#     sid = 1
+#     qid = 2
+#     que = Question.query.get((1,1))
+#     all_survey_details = user_schema1.dump(que)
+#     print(all_survey_details)
+
+#     return jsonify(all_survey_details.data)
 
 if __name__ == '__main__':
     app.debug = True
