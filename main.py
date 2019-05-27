@@ -1,112 +1,411 @@
-# Copyright 2016 Google Inc. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+from flask import Flask, request, jsonify, make_response, Response 
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+from slackclient import SlackClient
+import json
+import os
+import pymysql
 
-"""This is a sample Hello World API implemented using Google Cloud
-Endpoints."""
+app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-# [START imports]
-import endpoints
-from endpoints import message_types
-from endpoints import messages
-from endpoints import remote
-# [END imports]
+USER   = 'root'
+PASS   = 'admin123'
+#HOST   = '35.244.127.254'
+DBNAME = 'mydb'
+#cloud_sql_connection_name = 's3582671-api-test2:australia-southeast1:testdb=127.0.0.1:tcp:8085'
+cloud_sql_connection_name = 's3582671-api-test2:australia-southeast1:testdb'
 
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}?unix_socket=/cloudsql/{}'.format(USER,PASS,DBNAME,cloud_sql_connection_name)
 
-# [START messages]
-class EchoRequest(messages.Message):
-    message = messages.StringField(1)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@/{}?unix_socket=/cloudsql/{}'.format(USER,PASS,DBNAME,cloud_sql_connection_name)
 
-
-class EchoResponse(messages.Message):
-    """A proto Message that contains a simple string field."""
-    message = messages.StringField(1)
-	
-
-ECHO_RESOURCE = endpoints.ResourceContainer(
-    EchoRequest,
-    n=messages.IntegerField(2, default=1))
-	
-# [END messages]
+#USER = 'root'
+#PASSWORD = 'admin123'
+#DATABASE = 'mydb'
+## connection_name is of the format `project:region:your-cloudsql-instance`
+#CONNECTION_NAME = 's3582671-api-test2:australia-southeast1:testdb' 
 
 
-# [START echo_api_class]
-@endpoints.api(name='echo', version='v1')
-class EchoApi(remote.Service):
+#SQLALCHEMY_DATABASE_URI = (
+#    'mysql+pymysql://{user}:{password}'
+#    '?unix_socket=/cloudsql/{connection_name}').format(
+#        user=USER, password=PASSWORD,
+#        database=DATABASE, connection_name=CONNECTION_NAME)
 
-    # [START echo_api_method]
-	@endpoints.method(
-        # This method takes an empty request body.
-        message_types.VoidMessage,
-        # This method returns an Echo message.
-        EchoResponse,
-        path='echo/name',
-        http_method='GET',
-        name='getUserName')
-	def getUserName(self, request):
-		return EchoResponse(message='I am test user .... thanks')
+#app.config['SQLALCHEMY_DATABASE_URI'] =  SQLALCHEMY_DATABASE_URI
 
-	@endpoints.method(
-        # This method takes a ResourceContainer defined above.
-        ECHO_RESOURCE,
-        # This method returns an Echo message.
-        EchoResponse,
-        path='echo',
-        http_method='POST',
-        name='echo')
-	def echo(self, request):
-		output_message = ' '.join([request.message] * request.n)
-		return EchoResponse(message=output_message)
-    # [END echo_api_method]
+#mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]
 
-	@endpoints.method(
-        # This method takes a ResourceContainer defined above.
-        ECHO_RESOURCE,
-        # This method returns an Echo message.
-        EchoResponse,
-        path='echo/{n}',
-        http_method='POST',
-        name='echo_path_parameter')
-	def echo_path_parameter(self, request):
-		output_message = ' '.join([request.message] * request.n)
-		return EchoResponse(message=output_message)
+#Pavan's#    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
 
-	@endpoints.method(
-        # This method takes a ResourceContainer defined above.
-        message_types.VoidMessage,
-        # This method returns an Echo message.
-        EchoResponse,
-        path='echo/getApiKey',
-        http_method='GET',
-        name='echo_api_key',
-        api_key_required=True)
-	def echo_api_key(self, request):
-		key, key_type = request.get_unrecognized_field_info('key')
-		return EchoResponse(message=key)
-
-	@endpoints.method(
-        # This method takes an empty request body.
-        message_types.VoidMessage,
-        # This method returns an Echo message.
-        EchoResponse,
-        path='echo/email',
-        http_method='GET',
-        name='getUserEmail')
-	def getUserEmail(self, request):
-		return EchoResponse(message='test_email_address@test.com')
-# [END echo_api_class]
+slack_token = 'xoxb-575060474148-600534221555-oq2I4WPmJBSiNmT34br2dNJS'
+SLACK_VERIFICATION_TOKEN = 'QKeDPPoqJ4PfNm99ch0v1SUc'
+sc = SlackClient(slack_token)
+db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 
-# [START api_server]
-api = endpoints.api_server([EchoApi])
-# [END api_server]
+#Helper for verifying that requests came from Slack
+def verify_slack_token(request_token):
+    if SLACK_VERIFICATION_TOKEN != request_token:
+        print("Error: invalid verification token!")
+        print("Received {} but was expecting {}".format(request_token, SLACK_VERIFICATION_TOKEN))
+        return make_response("Request contains invalid Slack verification token", 403)
+
+class Survey(db.Model):
+    SurveyID = db.Column(db.Integer, primary_key=True)
+    Survey_Title = db.Column(db.String(200), unique=False, nullable =False )
+    
+    def __init__(self,SurveyID,Survey_Title):
+        self.SurveyID = SurveyID
+        self.Survey_Title = Survey_Title
+
+class UserSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('SurveyID','Survey_Title')
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+
+class Question(db.Model):
+    que_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    SurveyID = db.Column(db.Integer, db.ForeignKey('survey.SurveyID'),primary_key=True,autoincrement = False)
+    question_type = db.Column(db.String(100),nullable=False)
+    question = db.Column(db.String(300),nullable=False)
+    optionA = db.Column(db.String(100))
+    optionB = db.Column(db.String(100))
+    optionC = db.Column(db.String(100))
+    optionD = db.Column(db.String(100))
+    
+    def __init__(self,SurveyID,question_type,question,optionA,optionB,optionC,optionD):
+        self.question_type = question_type
+        self.SurveyID = SurveyID
+        self.question = question
+        self.optionA = optionA
+        self.optionB = optionB
+        self.optionC = optionC
+        self.optionD = optionD
+
+class UserSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('que_id','SurveyID','question_type','question','optionA','optionB','optionC','optionD')
+
+user_schema1 = UserSchema()
+users_schema1 = UserSchema(many=True)
+
+class User_info(db.Model):
+    UID = db.Column(db.String(50), primary_key=True)
+    Name = db.Column(db.String(300))
+
+    def __init__(self, UID,Name):
+        self.UID = UID
+        self.Name = Name
+class UserSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('UID','Name')
+user_schema2 = UserSchema()
+users_schema2 = UserSchema(many=True)
+
+
+class Answer(db.Model):
+    UID = db.Column(db.String(50), db.ForeignKey('user_info.UID'),primary_key=True)
+    que_id = db.Column(db.Integer, db.ForeignKey('question.que_id'),primary_key=True)
+    SurveyID = db.Column(db.Integer, db.ForeignKey('survey.SurveyID'),primary_key=True)
+    answer = db.Column(db.String(50), nullable=False)
+
+    def __init__(self, UID,que_id,SurveyID,answer):
+        self.UID = UID
+        self.que_id = que_id
+        self.SurveyID = SurveyID
+        self.answer = answer
+
+class UserSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('UID','que_id','SurveyID','answer')
+
+user_schema3 = UserSchema()
+users_schema3 = UserSchema(many=True)
+
+
+
+@app.route("/user", methods=["POST"])
+def add_question():
+    question1 = request.json['question']
+    op_a = request.json['optionA']
+    op_b = request.json['optionB']
+    op_c = request.json['optionC']
+    op_d = request.json['optionD']
+    questType = request.json['questionType']
+    
+    print(question1,op_a,op_b,op_c,op_d)
+    
+    new_question = Question(1,questType,question1,op_a,op_b,op_c,op_d)
+    db.session.add(new_question)
+    db.session.commit()
+    
+    return make_response("", 200)
+
+@app.route("/user/submit", methods=["POST"])
+def submit_question():
+
+    users = request.json['subUsers']
+    ques = request.json['question']
+    for que in ques:
+        # print("q: ",q)
+        # s = q['question']
+        # w = q['optionA']
+        # t = q['optionB']
+        # y = q['optionC']
+        # u = q['optionD']
+        # print("s: ",s)
+        # print("w: ",w)
+        # print("t: ",t)
+        # print("y: ",y)
+        # print("u: ",u)
+        
+
+        question1 = que['question']
+        op_a = que['optionA']
+        op_b = que['optionB']
+        op_c = que['optionC']
+        op_d = que['optionD']
+        question_id = que['que_id']
+        survey_id = que['SurveyID']
+        questType = que['question_type']
+        print("Question type is: ",questType)
+        
+        
+        if questType == "4":
+            op_a_value = json.dumps({
+                "value" : op_a,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+            op_b_value = json.dumps({
+                "value" : op_b,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+            op_c_value = json.dumps({
+                "value" : op_c,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+            op_d_value = json.dumps({
+                "value" : op_d,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+
+            print(op_a_value)
+        
+            attachments_json = [
+            {
+                "fallback": "Upgrade your Slack client to use messages like these.",
+                "color": "#3AA3E3",
+                "attachment_type": "default",
+                "callback_id": "menu_options_2319",
+                "actions": [
+                    {
+                        "name": "low",
+                        "text": op_a,
+                        "type": "button",
+                        "value": op_a_value
+                    },
+                    {
+                        "name": "high",
+                        "text": op_b,
+                        "type": "button",
+                        "value": op_b_value
+                    },
+                    {
+                        "name": "high",
+                        "text": op_c,
+                        "type": "button",
+                        "value": op_c_value
+                    },
+                    {
+                        "name": "high",
+                        "text": op_d,
+                        "type": "button",
+                        "value": op_d_value
+                    }
+                ]
+            }
+            ]
+
+        elif questType == "3":
+            op_a_value = json.dumps({
+                "value" : op_a,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+            op_b_value = json.dumps({
+                "value" : op_b,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+            op_c_value = json.dumps({
+                "value" : op_c,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+
+            print(op_a_value)
+        
+            attachments_json = [
+            {
+                "fallback": "Upgrade your Slack client to use messages like these.",
+                "color": "#3AA3E3",
+                "attachment_type": "default",
+                "callback_id": "menu_options_2319",
+                "actions": [
+                    {
+                        "name": "low",
+                        "text": op_a,
+                        "type": "button",
+                        "value": op_a_value
+                    },
+                    {
+                        "name": "high",
+                        "text": op_b,
+                        "type": "button",
+                        "value": op_b_value
+                    },
+                    {
+                        "name": "high",
+                        "text": op_c,
+                        "type": "button",
+                        "value": op_c_value
+                    }
+                ]
+            }
+            ]
+
+        elif questType == "2":
+            print("In que type 2.")
+            op_a_value = json.dumps({
+                "value" : op_a,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+            op_b_value = json.dumps({
+                "value" : op_b,
+                "qid" : question_id,
+                "surveyid" : survey_id
+            })
+
+            print(op_a_value)
+        
+            attachments_json = [
+            {
+                "fallback": "Upgrade your Slack client to use messages like these.",
+                "color": "#3AA3E3",
+                "attachment_type": "default",
+                "callback_id": "menu_options_2319",
+                "actions": [
+                    {
+                        "name": "low",
+                        "text": op_a,
+                        "type": "button",
+                        "value": op_a_value
+                    },
+                    {
+                        "name": "high",
+                        "text": op_b,
+                        "type": "button",
+                        "value": op_b_value
+                    }
+                ]
+            }
+            ]
+
+        
+        for user in users:
+            # Send a message with the above attachment
+            sc.api_call(
+            "chat.postMessage",
+            channel=user,
+            text = question1,
+            as_user = True,
+            attachments=attachments_json
+            )
+
+    return make_response("", 200)
+    
+
+@app.route("/slack/message_actions", methods=["POST"])
+def message_actions():
+
+    # Parse the request payload
+    form_json = json.loads(request.form["payload"])
+    print(form_json)
+
+    # Verify that the request came from Slack
+    verify_slack_token(form_json["token"])
+
+    # Check to see what the user's selection was and update the message accordingly
+    selection = form_json["actions"][0]["value"]
+    abc = json.loads(selection)
+    answer_value = abc["value"]
+    answer_que = abc["qid"]
+    answer_survey = abc["surveyid"]
+    u_id = form_json['user']['id']
+    name = form_json['user']['name']
+    
+    print("Value is: ",answer_value)
+    print("QID is:", answer_que)
+    print("surveyid is : ", answer_survey)
+    print("This is the ID:   ",id)
+    print("Name:  ",name)
+    
+    new_answer = Answer(u_id,answer_que,answer_survey,answer_value)
+    db.session.add(new_answer)
+    db.session.commit()
+
+
+    response = sc.api_call(
+      "chat.update",
+      channel=form_json["channel"]["id"],
+      ts=form_json["message_ts"],
+      text="Thank you! :smile:",
+      attachments=[] # empty `attachments` to clear the existing massage attachments
+    )
+
+    # Send an HTTP 200 response with empty body so Slack knows we're done here
+    return make_response("", 200)
+
+@app.route("/user/data", methods=["GET"])
+def get_user():
+	__tablename__ = 'question'
+	all_questions = Question.query.all()
+	result = users_schema1.dump(all_questions)
+	return jsonify(result.data)
+	#return "Richa"
+@app.route("/user/answer/data", methods=["GET"])
+def get_answer():
+	all_answer = Answer.query.all()
+	ans=users_schema3.dump(all_answer)
+	return jsonify(ans.data)
+
+@app.route("/user/info", methods=["GET"])
+def get_user_details():
+	all_user_data = User_info.query.all()
+	all_user = users_schema2.dump(all_user_data)
+	return jsonify(all_user.data)
+	#return "Testing User"
+
+@app.route("/survey", methods=["GET"])
+def get_survey():
+	all_survey_data = Survey.query.all()
+	all_survey = users_schema.dump(all_survey_data)
+	return jsonify(all_survey_data.data)
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
