@@ -80,6 +80,8 @@ submitCreateSurvey(){
             },
             body: JSON.stringify(this.survey)
         })
+        alert("New survey is created!!!")
+        // document.getElementById("surveyTitle").value = ""
         // .then(response => {
         //     this.setState(prevState => ({
         //         surveys:[this.survey, ...prevState.surveys]

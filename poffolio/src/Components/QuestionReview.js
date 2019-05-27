@@ -7,11 +7,13 @@ class QuestionReview extends Component {
         super()
         this.state = {questions: [], subQuestions:[], users:[], subUsers:[], surveys:[], SurveyID:"1"};
         this.SurveyID = "";
-        this.deleteOnClick = this.deleteOnClick.bind(this)
+        // this.deleteOnClick = this.deleteOnClick.bind(this)
         this.updateOnClick = this.updateOnClick.bind(this)
         this.checkboxOnClick = this.checkboxOnClick.bind(this)
         this.submitOnClick = this.submitOnClick.bind(this)
         this.changeOptionSurveyList = this.changeOptionSurveyList.bind(this)
+        this.deleteOnClick = this.deleteOnClick.bind(this)
+        // this.deleteHandler= this.deleteHandler.bind(this)
         // this.showmore = this.showmore.bind(this);
     }
     
@@ -41,9 +43,43 @@ class QuestionReview extends Component {
     updateOnClick(){
 
     }
-    deleteOnClick(){
-        alert("The Question is deleted!!!!")
+    deleteOnClick(SurveyID, que_id){
+        var anchor = document.getElementById(que_id)
+        console.log(anchor)
+        if(anchor != null){
+            anchor.onclick = function(){
+                console.log('http://127.0.0.1:5000/user/que/delete' + '/' + SurveyID + '/' + que_id)
+                fetch('http://127.0.0.1:5000/user/que/delete' + '/' + SurveyID + '/' + que_id,{method:'DELETE'})
+                .then(response => response.json())
+                .catch(err => {
+                   alert("unsuccessfull Delete!!!!")
+                })
+            }
+        }
+        
+        // var anchors = document.querySelectorAll(".deleteAnchors")
+        // for(var i = 0; i < anchors.length; i++){
+        //     anchors[i].addEventListener('click', deleteHandler(SurveyID, que_id), false)
+        //     break;
+        // }
+        // function deleteHandler(SurveyID, que_id){
+        //     console.log(SurveyID, "----", que_id)
+        // }
+        // if(document.getElementById(que_id).onclick == true)
+        // {
+        //     console.log(que_id)
+        //     fetch('http://127.0.0.1:5000/user/que/delete/' + '/' + SurveyID + '/' + que_id,{method:'DELETE'})
+        //     .then(response => {
+        //     response.json()
+        //     alert("The Question is deleted!!!!")
+        //     })
+        //     .catch(err => {
+        //        alert("unsuccessfull Delete!!!!")
+        //     })
+        // }
     }
+    
+    
     checkboxOnClick(){
         
     }
@@ -72,6 +108,10 @@ class QuestionReview extends Component {
             .catch(error =>
                 console.log(error)
             )
+        alert("Survey is summited!!!")
+        // for (var i = 0; i < this.state.users.length; i++){
+
+        // }
     }
 
     render() {
@@ -130,7 +170,7 @@ class QuestionReview extends Component {
                         // if(SurveyID === this.state.SurveyID){
                         //     console.log("equal")
                         // }
-                        console.log(this.state.SurveyID)
+                        // console.log(this.state.SurveyID)
                         if(SurveyID == this.state.SurveyID){
                             
                             que =   <div className="row">
@@ -176,8 +216,8 @@ class QuestionReview extends Component {
                                             {opC}
                                             {opD}
                                             <div className="quesLength">
-                                                <a className="col span-1-of-4" href="/update_question" onClick={this.updateOnClick}>Update</a>
-                                                <a className="col span-2-of-4"href="#" onClick={this.deleteOnClick}>Delete</a>
+                                                <a className="col span-1-of-4" href="/update_question" onClick={this.updateOnClick()}>Update</a>
+                                                <a className="col span-2-of-4 deleteAnchors" id={que_id} href="#" onClick={this.deleteOnClick(SurveyID, que_id)}>Delete</a>
                                                 <div className="col span-3-of-3"></div>
                                             </div>
                                             
