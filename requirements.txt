@@ -5,6 +5,5 @@ slackclient==2.0.0
 websocket_client
 websocket
 websockets
-mysqlclient
 requests
 PyMySQL

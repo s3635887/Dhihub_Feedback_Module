@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, Response 
+from flask import Flask, request, jsonify, render_template, make_response, Response 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from slackclient import SlackClient
@@ -8,36 +8,18 @@ import pymysql
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Pavan123@localhost:5432/Sample'
 USER   = 'root'
-PASS   = 'admin123'
-#HOST   = '35.244.127.254'
-DBNAME = 'mydb'
-#cloud_sql_connection_name = 's3582671-api-test2:australia-southeast1:testdb=127.0.0.1:tcp:8085'
-cloud_sql_connection_name = 's3582671-api-test2:australia-southeast1:testdb'
+PASS   = 'dhihub123'
+HOST   = '35.244.127.254'
+DBNAME = 'sample'
+cloud_sql_connection_name = 'feedbackmodule:australia-southeast1:dhihub2'
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}?unix_socket=/cloudsql/{}'.format(USER,PASS,DBNAME,cloud_sql_connection_name)
+#from local machine
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
 
+#from GCP
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@/{}?unix_socket=/cloudsql/{}'.format(USER,PASS,DBNAME,cloud_sql_connection_name)
-
-#USER = 'root'
-#PASSWORD = 'admin123'
-#DATABASE = 'mydb'
-## connection_name is of the format `project:region:your-cloudsql-instance`
-#CONNECTION_NAME = 's3582671-api-test2:australia-southeast1:testdb' 
-
-
-#SQLALCHEMY_DATABASE_URI = (
-#    'mysql+pymysql://{user}:{password}'
-#    '?unix_socket=/cloudsql/{connection_name}').format(
-#        user=USER, password=PASSWORD,
-#        database=DATABASE, connection_name=CONNECTION_NAME)
-
-#app.config['SQLALCHEMY_DATABASE_URI'] =  SQLALCHEMY_DATABASE_URI
-
-#mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]
-
-#Pavan's#    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
 
 slack_token = 'xoxb-575060474148-600534221555-oq2I4WPmJBSiNmT34br2dNJS'
 SLACK_VERIFICATION_TOKEN = 'QKeDPPoqJ4PfNm99ch0v1SUc'
@@ -154,7 +136,7 @@ def add_question():
 def submit_question():
 
     users = request.json['subUsers']
-    ques = request.json['question']
+    ques = request.json['questions']
     for que in ques:
         # print("q: ",q)
         # s = q['question']
@@ -382,30 +364,41 @@ def message_actions():
 
 @app.route("/user/data", methods=["GET"])
 def get_user():
-	__tablename__ = 'question'
-	all_questions = Question.query.all()
-	result = users_schema1.dump(all_questions)
-	return jsonify(result.data)
-	#return "Richa"
+    all_questions = Question.query.all()
+    result = users_schema1.dump(all_questions)
+    return jsonify(result.data)
+
 @app.route("/user/answer/data", methods=["GET"])
 def get_answer():
-	all_answer = Answer.query.all()
-	ans=users_schema3.dump(all_answer)
-	return jsonify(ans.data)
+    all_answer = Answer.query.all()
+    ans=users_schema3.dump(all_answer)
+    return jsonify(ans.data)
 
 @app.route("/user/info", methods=["GET"])
 def get_user_details():
-	all_user_data = User_info.query.all()
-	all_user = users_schema2.dump(all_user_data)
-	return jsonify(all_user.data)
-	#return "Testing User"
+    all_user_data = User_info.query.all()
+    all_user = users_schema2.dump(all_user_data)
+    return jsonify(all_user.data)
 
-@app.route("/survey", methods=["GET"])
-def get_survey():
-	all_survey_data = Survey.query.all()
-	all_survey = users_schema.dump(all_survey_data)
-	return jsonify(all_survey_data.data)
+@app.route("/user/survey", methods=["POST","GET"])
+def get_survey_details():
+    if request.method == "POST":
+        sur_id = request.json['id']
+        sur_name = request.json['title']
+        sur = Survey(sur_id,sur_name)
+        db.session.add(sur)
+        db.session.commit()
+    else:
+        all_survey_details = Survey.query.all()
+        all_survey_details = users_schema.dump(all_survey_details)
+    
+    return jsonify(all_survey_details.data)
 
 if __name__ == '__main__':
     app.debug = True
     app.run()
+
+
+
+
+
