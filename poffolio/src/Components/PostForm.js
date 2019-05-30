@@ -327,10 +327,11 @@ render() {
 
         return (
                 <div className="mainForm">
-                    <div className="logoForm">
+                    {/* <div className="logoForm">
                         <img src="/resources/css/img/Logo.gif"/>
-                    </div>
+                    </div> */}
                     <div className="questionForm">
+                        <br/>
                         <h2>Questionnaire</h2>
                         <div className="createSurveyForm">
                             <input id="surveyTitle" type="text"></input>
