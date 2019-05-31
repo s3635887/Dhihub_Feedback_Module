@@ -13,7 +13,7 @@ class QuestionReview extends Component {
         this.submitOnClick = this.submitOnClick.bind(this)
         this.changeOptionSurveyList = this.changeOptionSurveyList.bind(this)
         this.deleteOnClick = this.deleteOnClick.bind(this)
-        // this.deleteHandler= this.deleteHandler.bind(this)
+        // this.deleteHandler = this.deleteHandler.bind(this)
         // this.showmore = this.showmore.bind(this);
     }
     
@@ -52,6 +52,7 @@ class QuestionReview extends Component {
                 fetch('http://127.0.0.1:5000/user/que/delete' + '/' + SurveyID + '/' + que_id,{method:'DELETE'})
                 .then(response => response.json())
                 .catch(err => {
+                    // location.
                    alert("unsuccessfull Delete!!!!")
                 })
             }
@@ -149,11 +150,16 @@ class QuestionReview extends Component {
                 </div>
 
                 <div className="questionForm">
+                    <br/>
                     <h2>Questions review</h2>
-                    <div className="row col">
-                        Survey:
-                        <select id="surveySelect" onChange={this.changeOptionSurveyList}>
-                        </select>
+                    <div className="row table">
+                        <div className="col span-1-of-10">
+                            Survey:
+                        </div>
+                        <div className="col span-2-of-10"> 
+                            <select id="surveySelect" onChange={this.changeOptionSurveyList}>
+                            </select>
+                        </div>
                     </div>
                     {
 
@@ -214,8 +220,8 @@ class QuestionReview extends Component {
                                             {opC}
                                             {opD}
                                             <div className="quesLength">
-                                                <a className="col span-1-of-4" href="/update_question" onClick={this.updateOnClick()}>Update</a>
-                                                <a className="col span-2-of-4 deleteAnchors" id={que_id} href="#" onClick={this.deleteOnClick(SurveyID, que_id)}>Delete</a>
+                                                {/* <a className="col span-1-of-4" href="/update_question" onClick={this.updateOnClick()}>Update</a> */}
+                                                <a className="col span-1-of-4 deleteAnchors" id={que_id} href="#" onClick={this.deleteOnClick(SurveyID, que_id)}>Delete</a>
                                                 <div className="col span-3-of-3"></div>
                                             </div>
                                             

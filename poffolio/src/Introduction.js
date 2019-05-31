@@ -4,7 +4,11 @@ class Introduction extends Component{
     render(){
         return(
             <div>
+                <div className="logo">
+                        <img src="/resources/css/img/Logo.gif"/>
+                </div>
                 <header>
+                
                 <nav>
                     <div className="row">
                         <ul className="main-nav">
@@ -16,7 +20,7 @@ class Introduction extends Component{
                     </div>
                 </nav>
                 <div className="hero-text-box">
-                    <h1>Wellcome to chatbot.<br/> Let's exploit the newest technology!</h1>
+                    <h1>Welcome to Dhihub<br/> Feedback Management System.</h1>
                     <a className="btn btn-full" href="#">About us</a>
                     <a className="btn btn-ghost" href="#">show me more</a>
                 </div>

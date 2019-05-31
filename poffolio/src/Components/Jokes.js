@@ -84,17 +84,26 @@ class Jokes extends Component {
                         )
                     })
                 }
-                <button type="submit" onClick={this.submitOnClick}>Submit</button>
+                <div className="userForm">
+                    <button type="submit" onClick={this.submitOnClick}>Submit</button>
+                </div>
+                
                 </div>
                 <div className="questionForm">
                 <h2>Survey review</h2>
-                <div className="row col">
-                        Survey:
-                        <select id="surveySelect" onChange={this.changeOptionSurveyList}>
-                            {/* <option value="1">20/May/2019</option>
-                            <option value="2">21/May/2019</option>
-                            <option value="3">22/May/2019</option> */}
-                        </select>
+                <div className="row table">
+                    {/* <div className="row table"> */}
+                        <div className="col span-1-of-10">
+                            Survey:
+                        </div>
+                        <div className="col span-2-of-10"> 
+                            <select id="surveySelect" onChange={this.changeOptionSurveyList}>
+                                {/* <option value="1">20/May/2019</option>
+                                <option value="2">21/May/2019</option>
+                                <option value="3">22/May/2019</option> */}
+                            </select>
+                        </div>
+                    {/* </div> */}
                     </div>
                 <div>
                 {
