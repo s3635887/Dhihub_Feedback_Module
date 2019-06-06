@@ -14,16 +14,16 @@ class Jokes extends Component {
     }
     
     componentDidMount(){
-        fetch('http://127.0.0.1:5000/user/answer/data')
+        fetch('https://feedbackmodule.appspot.com/user/answer/data')
             .then(response => response.json())
             .then(json => this.setState({answers:json}));
-        fetch('http://127.0.0.1:5000/user/data')
+        fetch('https://feedbackmodule.appspot.com/user/data')
             .then(response => response.json())
             .then(json => this.setState({questions:json}));
-        fetch('http://127.0.0.1:5000/user/info')
+        fetch('https://feedbackmodule.appspot.com/user/info')
             .then(response => response.json())
             .then(json => this.setState({users:json}));
-        fetch('http://127.0.0.1:5000/user/survey')
+        fetch('https://feedbackmodule.appspot.com/user/survey')
             .then(response => response.json())
             .then(json => this.setState({surveys:json}));
     }
@@ -156,7 +156,7 @@ class Jokes extends Component {
                                     }
                                     
                                     quesList = 
-                                            <div className="row table" key={que_id}>
+                                            <div className="row table questionItem" key={que_id}>
                                                 {que}
                                                 {opA}
                                                 {opB}
