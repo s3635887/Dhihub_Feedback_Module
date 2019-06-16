@@ -18,14 +18,14 @@ class QuestionReview extends Component {
     }
     
     componentDidMount(){
-        fetch('https://feedbackmodule.appspot.com/user/data')
+        fetch('http://127.0.0.1:5000/user/data')
             .then(response => response.json())
             .then(json => this.setState({questions:json}));
 
-        fetch('https://feedbackmodule.appspot.com/user/info')
+        fetch('http://127.0.0.1:5000/user/info')
             .then(response => response.json())
             .then(json => this.setState({users:json}));
-        fetch('https://feedbackmodule.appspot.com/user/survey')
+        fetch('http://127.0.0.1:5000/user/survey')
             .then(response => response.json())
             .then(json => this.setState({surveys:json}));
     }
@@ -102,7 +102,7 @@ class QuestionReview extends Component {
                 data.questions.push(this.state.questions[k])
             }
         }
-        axios.post('https://feedbackmodule.appspot.com/user/submit', data)
+        axios.post('http://127.0.0.1:5000/user/submit', data)
             .then(response => {
                 console.log(response)
             })

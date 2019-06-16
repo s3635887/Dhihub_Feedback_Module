@@ -8,12 +8,18 @@ import os
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Pavan123@localhost:5432/Sample'
+
+#connection to google cloud sql
 USER   = 'root'
 PASS   = 'dhihub123'
 HOST   = '35.244.127.254'
 DBNAME = 'sample'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
-slack_token = 'xoxb-575060474148-600534221555-oq2I4WPmJBSiNmT34br2dNJS'
+
+#slack bot token
+slack_token = 'xoxb-575060474148-600534221555-n4yYl8oo4ATGmTURPXvj9y7L'
+
+#Slack app verification code
 SLACK_VERIFICATION_TOKEN = 'QKeDPPoqJ4PfNm99ch0v1SUc'
 sc = SlackClient(slack_token)
 db = SQLAlchemy(app)
@@ -27,10 +33,13 @@ def verify_slack_token(request_token):
         print("Received {} but was expecting {}".format(request_token, SLACK_VERIFICATION_TOKEN))
         return make_response("Request contains invalid Slack verification token", 403)
 
+# database models
+# model for table survey
 class Survey(db.Model):
     SurveyID = db.Column(db.Integer, primary_key=True)
     Survey_Title = db.Column(db.String(200), unique=False, nullable =False )
     
+    # initialisation
     def __init__(self,SurveyID,Survey_Title):
         self.SurveyID = SurveyID
         self.Survey_Title = Survey_Title
@@ -42,7 +51,7 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-
+# model for table Question
 class Question(db.Model):
     que_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     SurveyID = db.Column(db.Integer, db.ForeignKey('survey.SurveyID'),primary_key=True,autoincrement = False)
@@ -53,6 +62,7 @@ class Question(db.Model):
     optionC = db.Column(db.String(100))
     optionD = db.Column(db.String(100))
     
+    # initialisation
     def __init__(self,SurveyID,question_type,question,optionA,optionB,optionC,optionD):
         self.question_type = question_type
         self.SurveyID = SurveyID
@@ -70,10 +80,12 @@ class UserSchema(ma.Schema):
 user_schema1 = UserSchema()
 users_schema1 = UserSchema(many=True)
 
+# model for table user info
 class User_info(db.Model):
     UID = db.Column(db.String(50), primary_key=True)
     Name = db.Column(db.String(300))
 
+    # initialisation
     def __init__(self, UID,Name):
         self.UID = UID
         self.Name = Name
@@ -84,13 +96,14 @@ class UserSchema(ma.Schema):
 user_schema2 = UserSchema()
 users_schema2 = UserSchema(many=True)
 
-
+# model for table answers
 class Answer(db.Model):
     UID = db.Column(db.String(50), db.ForeignKey('user_info.UID'),primary_key=True)
     que_id = db.Column(db.Integer, db.ForeignKey('question.que_id'),primary_key=True)
     SurveyID = db.Column(db.Integer, db.ForeignKey('survey.SurveyID'),primary_key=True)
     answer = db.Column(db.String(50), nullable=False)
 
+    # initialisation
     def __init__(self, UID,que_id,SurveyID,answer):
         self.UID = UID
         self.que_id = que_id
@@ -106,7 +119,7 @@ user_schema3 = UserSchema()
 users_schema3 = UserSchema(many=True)
 
 
-
+# endpoint to get the question details from the react frontend form and save it to the database.
 @app.route("/user", methods=["POST"])
 def add_question():
     question1 = request.json['question']
@@ -123,26 +136,14 @@ def add_question():
     db.session.commit()
     
     return make_response("", 200)
-
+# endpoint to get list of questions/survey and list of users to whom the survey will be sent and send the survey in slack
 @app.route("/user/submit", methods=["POST"])
 def submit_question():
-
+    # getting users and questions
     users = request.json['subUsers']
     ques = request.json['questions']
     for que in ques:
-        # print("q: ",q)
-        # s = q['question']
-        # w = q['optionA']
-        # t = q['optionB']
-        # y = q['optionC']
-        # u = q['optionD']
-        # print("s: ",s)
-        # print("w: ",w)
-        # print("t: ",t)
-        # print("y: ",y)
-        # print("u: ",u)
         
-
         question1 = que['question']
         op_a = que['optionA']
         op_b = que['optionB']
@@ -153,7 +154,8 @@ def submit_question():
         questType = que['question_type']
         print("Question type is: ",questType)
         
-        
+        # adding quetionId and surveyID to the value of button so that when we get the answer from the user,
+        # we will know for which quetion and which suvery that anser belongs to
         if questType == "4":
             op_a_value = json.dumps({
                 "value" : op_a,
@@ -299,9 +301,8 @@ def submit_question():
             }
             ]
 
-        
+        # send quet to multiple slack users
         for user in users:
-            # Send a message with the above attachment
             sc.api_call(
             "chat.postMessage",
             channel=user,
@@ -312,7 +313,9 @@ def submit_question():
 
     return make_response("", 200)
     
-
+# endpoint to get the JSON payload i.e. when a user replies on slack, slack sends a JSON reply to the URL we have mentions in 
+# Interactive messeges or our slack app. That JSON file is called payload. That payload contains the value of the button 
+# pressed by the user. When the user clicks, that question is replaced with a thank you message.
 @app.route("/slack/message_actions", methods=["POST"])
 def message_actions():
 
@@ -342,7 +345,7 @@ def message_actions():
     db.session.add(new_answer)
     db.session.commit()
 
-
+    # replacing the question with thank you message
     response = sc.api_call(
       "chat.update",
       channel=form_json["channel"]["id"],
@@ -354,24 +357,28 @@ def message_actions():
     # Send an HTTP 200 response with empty body so Slack knows we're done here
     return make_response("", 200)
 
+# endpoint to get all questions from database and sending the data to frontend in a JSON fromat 
 @app.route("/user/data", methods=["GET"])
 def get_user():
     all_questions = Question.query.all()
     result = users_schema1.dump(all_questions)
     return jsonify(result.data)
-
+# endpoint to get all the answers from the Answers table and sending it to the frontend in JSON format
 @app.route("/user/answer/data", methods=["GET"])
 def get_answer():
     all_answer = Answer.query.all()
     ans=users_schema3.dump(all_answer)
     return jsonify(ans.data)
 
+# Getting the user data from user_info table and sending it to frontend in JSON fromat 
 @app.route("/user/info", methods=["GET"])
 def get_user_details():
     all_user_data = User_info.query.all()
     all_user = users_schema2.dump(all_user_data)
     return jsonify(all_user.data)
 
+# For a post request, a new suvery is created by getting the id and tilte from front end and saving it in Survey Table
+# For the get request, it gets all the data from the Survey table and sent it to front end in JSON format
 @app.route("/user/survey", methods=["POST","GET"])
 def get_survey_details():
     if request.method == "POST":
@@ -385,24 +392,63 @@ def get_survey_details():
         all_survey_details = users_schema.dump(all_survey_details)
         return jsonify(all_survey_details.data)
 
+# endpoint to delete a quetion
 @app.route("/user/que/delete/<sid>/<qid>", methods=["DELETE"])
 def que_delete(sid,qid):
-    print(sid,qid)
     que = Question.query.get((qid,sid))
     # a = users_schema1.dump(que)
     db.session.delete(que)
     db.session.commit()
     return make_response("", 200)
 
-@app.route("/user/que/delete1", methods=["GET"])
-def que1_delete():
-    sid = 11
-    qid = 44
+# endpoint to delete a quetion
+@app.route("/user/que/update/<sid>/<qid>", methods=["PUT"])
+def que_update(sid,qid):
+    print(sid,qid)
     que = Question.query.get((qid,sid))
-    all_survey_details = user_schema1.dump(que)
-    print(all_survey_details)
+    questType = request.json['questionType']
+    if questType == "4":
+        question_new = request.json['question']
+        op_a = request.json['optionA']
+        op_b = request.json['optionB']
+        op_c = request.json['optionC']
+        op_d = request.json['optionD']
 
-    return jsonify(all_survey_details.data)
+        que.question = question_new
+        que.optionA = op_a
+        que.optionB = op_b
+        que.optionC = op_c
+        que.optionD = op_d
+        db.session.commit()
+        return make_response("", 200)
+
+    elif questType == "3":
+        question_new = request.json['question']
+        op_a = request.json['optionA']
+        op_b = request.json['optionB']
+        op_c = request.json['optionC']
+
+        que.question = question_new
+        que.optionA = op_a
+        que.optionB = op_b
+        que.optionC = op_c
+        db.session.commit()
+        return make_response("", 200)
+
+    elif questType == "2":
+        question_new = request.json['question']
+        op_a = request.json['optionA']
+        op_b = request.json['optionB']
+
+        que.question = question_new
+        que.optionA = op_a
+        que.optionB = op_b
+        db.session.commit()
+        return make_response("", 200)
+
+    else:
+        return make_response("No Update", 400)
+
 
 if __name__ == '__main__':
     app.debug = True
