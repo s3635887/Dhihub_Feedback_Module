@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import axios from 'axios'
+import {Link} from 'react-router-dom'
 // import Header from '../Header'
 
 class QuestionReview extends Component {
     constructor(){
         super()
-        this.state = {questions: [], subQuestions:[], users:[], subUsers:[], surveys:[], SurveyID:"1"};
+        this.state = {questions: [], subQuestions:[], users:[], subUsers:[], surveys:[], SurveyID:"1", data: "some default data"};
         this.SurveyID = "";
         // this.deleteOnClick = this.deleteOnClick.bind(this)
         this.updateOnClick = this.updateOnClick.bind(this)
@@ -18,14 +19,14 @@ class QuestionReview extends Component {
     }
     
     componentDidMount(){
-        fetch('http://127.0.0.1:5000/user/data')
+        fetch('https://feedbackmodule.appspot.com/user/data')
             .then(response => response.json())
             .then(json => this.setState({questions:json}));
 
-        fetch('http://127.0.0.1:5000/user/info')
+        fetch('https://feedbackmodule.appspot.com/user/info')
             .then(response => response.json())
             .then(json => this.setState({users:json}));
-        fetch('http://127.0.0.1:5000/user/survey')
+        fetch('https://feedbackmodule.appspot.com/user/survey')
             .then(response => response.json())
             .then(json => this.setState({surveys:json}));
     }
@@ -40,16 +41,16 @@ class QuestionReview extends Component {
     fetchQuestions = () => {
     }
 
-    updateOnClick(){
-
+    updateOnClick(data){
+        this.setState({data})
     }
     deleteOnClick(SurveyID, que_id){
         var anchor = document.getElementById(que_id)
         console.log(anchor)
         if(anchor != null){
             anchor.onclick = function(){
-                console.log('http://127.0.0.1:5000/user/que/delete' + '/' + SurveyID + '/' + que_id)
-                fetch('http://127.0.0.1:5000/user/que/delete' + '/' + SurveyID + '/' + que_id,{method:'DELETE'})
+                console.log('https://feedbackmodule.appspot.com/user/que/delete' + '/' + SurveyID + '/' + que_id)
+                fetch('https://feedbackmodule.appspot.com/user/que/delete' + '/' + SurveyID + '/' + que_id,{method:'DELETE'})
                 .then(response => response.json())
                 .catch(err => {
                     // location.
@@ -102,7 +103,7 @@ class QuestionReview extends Component {
                 data.questions.push(this.state.questions[k])
             }
         }
-        axios.post('http://127.0.0.1:5000/user/submit', data)
+        axios.post('https://feedbackmodule.appspot.com/user/submit', data)
             .then(response => {
                 console.log(response)
             })
@@ -126,6 +127,9 @@ class QuestionReview extends Component {
         })
         return(
             <div className="mainForm">
+                {/* {
+                    React.cloneElement(this.props.children, {data: this.state.data, setData: this.updateOnClick})
+                } */}
                 <div className="usersForm">
                 {
                     this.state.users.map(user => {
@@ -154,7 +158,7 @@ class QuestionReview extends Component {
                     <h2>Questions review</h2>
                     <div className="row table">
                         <div className="col span-1-of-10">
-                            Survey:
+                        Survey:
                         </div>
                         <div className="col span-2-of-10"> 
                             <select id="surveySelect" onChange={this.changeOptionSurveyList}>
@@ -213,14 +217,16 @@ class QuestionReview extends Component {
                                 }
                                 
                                 form = 
-                                        <div className="row table" key={que_id} >
+                                        <div className="row table questionItem" key={que_id} >
                                             {que}
                                             {opA}
                                             {opB}
                                             {opC}
                                             {opD}
                                             <div className="quesLength">
+                                                <Link to="/update_question" >Update</Link>
                                                 {/* <a className="col span-1-of-4" href="/update_question" onClick={this.updateOnClick()}>Update</a> */}
+                                                
                                                 <a className="col span-1-of-4 deleteAnchors" id={que_id} href="#" onClick={this.deleteOnClick(SurveyID, que_id)}>Delete</a>
                                                 <div className="col span-3-of-3"></div>
                                             </div>

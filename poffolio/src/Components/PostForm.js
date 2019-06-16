@@ -29,7 +29,7 @@ class PostForm extends Component {
     }
 
 componentDidMount(){
-    fetch('http://127.0.0.1:5000/user/survey')
+    fetch('https://feedbackmodule.appspot.com/user/survey')
         .then(response => response.json())
         // .then(json => this.data.surveys = json)
         .then(json => this.setState({surveys: json}))
@@ -73,7 +73,7 @@ submitCreateSurvey(){
     // this.setState({objectSurvey:{id:}})
     
     if(surveyTitle != ""){
-        fetch('http://127.0.0.1:5000/user/survey', {
+        fetch('https://feedbackmodule.appspot.com/user/survey', {
             method: 'POST', 
             headers:{
                 'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ submitHandler = e => {
             this.state.object.optionC = opC
             this.state.object.optionD = opD
             this.state.object.surveyID = surveyID
-            fetch('http://127.0.0.1:5000/user', {
+            fetch('https://feedbackmodule.appspot.com/user', {
                 method: 'POST', 
                 headers:{
                     'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ submitHandler = e => {
             this.state.object.optionC = opC
             this.state.object.optionD = null
             this.state.object.surveyID = surveyID
-            axios.post('http://127.0.0.1:5000/user', this.state.object)
+            axios.post('https://feedbackmodule.appspot.com/user', this.state.object)
             .then(response => {
                 console.log(response)
             })
@@ -186,7 +186,7 @@ submitHandler = e => {
             this.state.object.optionC = null
             this.state.object.optionD = null
             this.state.object.surveyID = surveyID
-            axios.post('http://127.0.0.1:5000/user', this.state.object)
+            axios.post('https://feedbackmodule.appspot.com/user', this.state.object)
             .then(response => {
                 console.log(response)
             })
@@ -211,7 +211,7 @@ submitHandler = e => {
             this.state.object.optionC = null
             this.state.object.optionD = null
             this.state.object.surveyID = surveyID
-            fetch('http://127.0.0.1:5000/user', {
+            fetch('https://feedbackmodule.appspot.com/user', {
                 method: 'POST', 
                 headers:{
                     'Content-Type': 'application/json'
